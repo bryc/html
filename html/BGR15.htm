@@ -1,0 +1,140 @@
+<style>
+    body {
+        font-size:16px;
+        font-family:tahoma, sans-serif;
+
+        background:#ECA;
+    }
+    div#code{margin-top:4px;}
+    div#code2 {
+        padding:8px;
+               
+        color:#FFF;
+        border:2px solid #000;
+        outline:2px solid #EEE;
+        text-shadow: #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px, #000 0px 0px 1px;
+    	-webkit-font-smoothing: antialiased;
+    }
+    input {
+    	font-size:16px;
+    	font-family:tahoma;
+
+        outline:none;
+        margin-top:8px;
+        margin-bottom:8px;
+    }
+    a{color:#DDD;}
+    h1{margin:0;padding:0;}
+    #mono{font-family:monospace;}
+    #label{font-weight:bold;display:inline-block;width:150px;}
+</style>
+
+
+
+<div id=code2>
+<h1>RGB24 to BGR15 converter</h1>
+Paste a 6 digit hex color here (XXXXXX) to convert it to the closest BGR15 code.
+Original idea taken from <a target="_blank" href="http://www.conradshome.com/html2bgr15/">here</a> and built in JS instead of PHP. You can also enter a 4 digit BGR15 color to decode it back to RGB24.
+<br>
+While input type is RGB24, the foreground is set to the quantized value while background is set to the original, showing any visible color difference to expect.
+<br><input maxlength=6>
+<div id=code></div>
+</div>
+
+ 
+<script>
+function elem(options) {
+    var el = document.createDocumentFragment();
+    var tag = options[0];
+    var prop = options[1];
+    if (typeof tag === "string") {
+        el = document.createElement(tag);}
+    if (typeof prop === "object") {
+        for (var item in prop) {
+            el[item] = prop[item];}
+    } else if (prop) {
+        el.innerHTML = prop;}
+    for (var i = 1; i < arguments.length; i++) {
+        if (arguments[i].nodeType > 0) {
+            el.appendChild(arguments[i]);}}
+    return el;
+}
+
+function replace(target, replacement) {
+    while (target.firstChild) {
+        target.removeChild(target.firstChild);
+    }
+    target.appendChild(replacement);
+}
+
+function hex2nds(str) {
+    function cr(v,a,b){return Math.round((v-a[0])*(b[1]-b[0])/(a[1]-a[0])+b[0]);}
+
+    var type = 0;
+    if (str.length == 4) {
+        type = 1;
+        var bgrhex = parseInt(str, 16);
+        var c = [
+            bgrhex >> 10 & 0x1F,
+            bgrhex >> 5 & 0x1F,
+            bgrhex & 0x1F
+        ];
+        str = (("00"+cr(c[2],[0,31],[0,255]).toString(16)).slice(-2) +
+            ("00"+cr(c[1],[0,31],[0,255]).toString(16)).slice(-2) +
+            ("00"+cr(c[0],[0,31],[0,255]).toString(16)).slice(-2)).toUpperCase();
+    }
+
+    var BGR15 = {};
+    BGR15.hex = str.toUpperCase();
+    BGR15.rgb = BGR15.hex.match(/.{1,2}/g);
+    BGR15.rgb2 = [];
+    BGR15.bgr = [];
+    BGR15.bgr_bin = "1";
+    BGR15.upscaled = "";
+
+    for (var i = 2; i >= 0; i--) {
+        BGR15.rgb[i] = parseInt(BGR15.rgb[i],16);
+        BGR15.bgr[2-i] = cr(BGR15.rgb[i],[0,255],[0,31]);
+        BGR15.rgb2[i] = cr(BGR15.bgr[2-i],[0,31],[0,255]);
+        BGR15.bgr_bin += ("00000"+BGR15.bgr[2-i].toString(2)).slice(-5);
+        BGR15.upscaled = ("00"+BGR15.rgb2[i].toString(16).toUpperCase()).slice(-2) + BGR15.upscaled;
+    }
+
+    console.log(BGR15)
+    BGR15.nds = parseInt(BGR15.bgr_bin,2).toString(16).toUpperCase();
+
+    BGR15.type = type ? "BGR15 - Nintendo DS" : "RGB24 - true color";
+    BGR15.input = type ? BGR15.nds : BGR15.hex;
+    return ["0x"+BGR15.nds, BGR15.upscaled, BGR15.hex, BGR15.type, BGR15.input];
+}
+
+document.querySelector("input").oninput = function() {
+    if (this.value.match(/^(([0-9a-fA-F]){6}|([0-9a-fA-F]){4})$/i)) {
+
+        var YEAH = hex2nds(this.value);
+        var lole = elem([],
+            elem(["div"],
+                elem(["span",{id:"label",innerHTML:"Input: "}]),
+                elem(["span",{id:"mono",innerHTML:YEAH[4]}])
+            ),
+            elem(["div"],
+                elem(["span",{id:"label",innerHTML:"Input type: "}]),
+                elem(["span",{innerHTML:YEAH[3]}])
+            ),
+            elem(["div"],
+                elem(["span",{id:"label",innerHTML:"Closest BGR15: "}]),
+                elem(["span",{innerHTML:YEAH[0],id:"mono"}])
+            ),
+            elem(["div"],
+                elem(["span",{id:"label",innerHTML:"Closest RGB24: "}]),
+                elem(["span",{innerHTML:"#"+YEAH[1],id:"mono"}])
+            ));
+
+        replace(document.querySelector("div#code"), lole);
+
+        document.querySelector("div#code2").style.background = "#"+YEAH[1];
+        document.querySelector("body").style.background = "#"+YEAH[2];
+    }
+}
+
+</script>

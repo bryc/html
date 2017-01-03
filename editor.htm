@@ -1,0 +1,91 @@
+<link rel="icon" type="image/png" href="http://i.imgur.com/2D3uk7N.png">
+<script src="http://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
+
+<style>
+body,html {height:100%}
+body {display:flex;margin:0}
+#Ace {width:50%}
+iframe#Out {min-width:0%;flex:1;border:0}
+::-webkit-scrollbar {width:16px}
+::-webkit-scrollbar-thumb {border-radius:2px;background:#333}
+::-webkit-scrollbar-thumb:active {background:#777}
+
+.handle {
+    width:7px;border-left:1px solid #FFF;cursor:col-resize;
+    background: #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFAQMAAAC+ShTcAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAA1JREFUCNdjaGBggGAAB4oBgcVtFeYAAAAASUVORK5CYII=) no-repeat center;
+}
+</style>
+
+<script>
+window.addEventListener("load", function() {
+
+    var Ace, code, timer, timer2, out, store,
+        isNew = (window.location.search === "?new"),
+        lsUpdateTimer  = 2000;  // Update localStorage in 2 seconds
+        ifUpdateTimer  = 50;    // Update iframe in 50 milliseconds
+        ifUpdateTimer2 = 500;   // Update iframe in 0.5 seconds if 
+        sizeFactor     = 44000; // Size in byte to start new timer
+    
+    document.title = isNew ? "New" : "Edit";
+    
+    function updateStorage() {
+        localStorage.setItem("brycHtmlEditor", code);
+    }
+
+    function updateOutput() {
+        code = Ace.getSession().getValue();
+        out.src = "data:text/html;charset=utf-8," +
+            encodeURIComponent(code);
+    }
+
+    Ace = ace.edit("Ace");
+    Ace.getSession().setUseWorker(false);
+    Ace.setTheme("ace/theme/twilight");
+    Ace.getSession().setMode("ace/mode/html");
+
+    Ace.getSession().on("change", function() {
+        var size = Ace.getValue().length;
+        clearTimeout(timer2);
+        timer2 = setTimeout(updateOutput, size>sizeFactor?ifUpdateTimer2:ifUpdateTimer);
+        
+        if(!isNew) {
+            clearTimeout(timer);
+            timer = setTimeout(updateStorage, lsUpdateTimer);
+        }
+    });
+
+    out = document.getElementById("Out");
+    if (!isNew && (store=localStorage.getItem("brycHtmlEditor")) !== null) {
+        Ace.setValue(store, 1);
+    }
+    
+    Ace.focus();
+    updateOutput();
+    
+    $("#Ace").resizable({ 
+        handles : {s : $(".handle")},
+        resize: function() {$("#Ace").css("height","100%") },
+        start:  function() {$("#Out").css("pointer-events","none")},
+        stop:   function() {$("#Out").css("pointer-events","")}
+    });
+    
+    document.addEventListener("keydown", function(event) {
+        if (event.keyCode == 20 && event.ctrlKey) { 
+           if($("#Ace").css("display") === "block") {
+               $("#Ace").css("display", "none");
+               $(".handle").css("display", "none");
+           } else {
+               $("#Ace").css("display","block");
+               $(".handle").css("display", "block");
+               Ace.focus();
+            } 
+        }
+    });
+});
+</script>
+
+<div id="Ace"></div>
+<div class="handle"></div>
+<iframe id="Out"></iframe>
