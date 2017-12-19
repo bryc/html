@@ -1,0 +1,359 @@
+<!-- 
+Notes: 
+- Intro level passwords are rejected if you have any upgrades. Hadouken is an exception, but ONLY activates with full heart tanks.
+- Hadouken sprite animations rely on the sprites of the Upgraded X, and will glitch out if they are disabled.
+- Hakouken flag is ignored unless holding L+R+X+Down AT THE TIME of pressing Start. This is where many people screw up. You need like 3 hands.
+- The parity bits are kinda interesting. SOMETIMES despite hearing a failing sound for bad parity, it will load if checksum is valid. Intro loads and X cannot be controlled, and shows low HP animation.
+-->
+
+<style>
+[data-tooltip]{font-weight:bold;position:relative;z-index:2;cursor:pointer}[data-tooltip]:after,[data-tooltip]:before{visibility:hidden;opacity:0;pointer-events:none}[data-tooltip]:before{position:absolute;bottom:150%;left:50%;margin-bottom:5px;margin-left:-80px;padding:7px;white-space: nowrap;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;background-color:#000;background-color:hsla(0,0%,20%,.9);color:#fff;content:attr(data-tooltip);text-align:center;font-size:14px;line-height:1.2}[data-tooltip]:after{position:absolute;bottom:150%;left:50%;margin-left:-5px;width:0;border-top:5px solid #000;border-top:5px solid hsla(0,0%,20%,.9);border-right:5px solid transparent;border-left:5px solid transparent;content:" ";font-size:0;line-height:0}[data-tooltip]:hover:after,[data-tooltip]:hover:before{visibility:visible;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";filter:progid: DXImageTransform.Microsoft.Alpha(Opacity=100);opacity:1}
+body{font-family:arial}
+    textarea.decode{font-size:20px;width:224px;resize:none;margin:8px;}
+    td{font-size:24px;font-family:Arial Black;text-align:center;width:32px;height:32px;border:1px solid;}
+    table{margin:8px;}
+    div.output{padding:4px;margin-top:8px;width:256px;border:1px solid;}
+    div.contrl{border:1px solid;padding:4px;margin:8px;}
+    div.box{display:flex;}
+    h1{margin:2px 0;}h3{font-size:16px;margin:2px 0;}
+    h4{text-align:center;border-bottom:1px solid #CCC;font-size:18px;padding-bottom:4px;margin:0;margin-bottom:4px;}
+    input[type=checkbox]{width:16px;height:16px;margin:4px;cursor:pointer;}
+</style>
+
+<h1>Mega Man X Password (En/De)coder</h1>
+<div class=box> <textarea rows=3 placeholder="Enter password to decode here" class=decode></textarea>
+<table class=mmx>
+    <tr><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td></tr>
+</table>
+
+</div>
+
+<div class=box>
+<div class=contrl></div>
+<div class=output>Output will be here</div>
+
+</div>
+<div style="margin:8px;width:512px;"><b>Notes:</b> Passwords pointing to the Opening Stage will be <i>rejected</i> if any upgrades are used (besides Hadouken which only works with full Heart tanks anyway). Sad but true. For a weird glitch, try Hadouken with full Heart Tanks but no Upgrades.
+<br><br>
+The "XOR" value (0-7) merely changes the permutation of the final password (there are 8 possible) by XOR bit mask, but has no effect on gameplay. And the parity bits are used in case of odd numbers of bits. Without the correct parity bits set, the password will be rejected.
+</div>
+<script>
+
+function elem(options) {
+    var el = document.createDocumentFragment();
+    var tag = options[0];
+    var prop = options[1];
+
+    if(typeof tag === "string") {
+        el = document.createElement(tag);
+    }
+
+    if(typeof prop === "object") {
+        for (var item in prop) {
+            el[item] = prop[item];
+        }
+    } else if(prop) {
+        el.innerHTML = prop;
+    }
+
+    for(var i = 1; i < arguments.length; i++) {
+        if(arguments[i].nodeType > 0) {
+            el.appendChild(arguments[i]);
+        }
+    }
+
+    return el;
+}
+
+var mem;
+tbl = document.querySelectorAll("table.mmx td");
+inp = document.querySelector("textarea.decode");
+inf = document.querySelector("div.output");
+
+function saveBits(e) {
+    var countBits=n=>{var cnt=0;while(n)n&=n-1,cnt++;return cnt}
+    var chked = this.checked;
+    var loc = this.id=="xor" ? null : this.whatevs.split(',').map(Number);
+
+    var xorVal = mem[3] >> 4;
+    var xorByt = (xorVal << 4) + xorVal;
+    //mem[0] ^= xorByt;
+    //mem[1] ^= xorByt;
+    //mem[2] ^= xorByt;
+
+    if(this.id=="xor") {
+        mem[3] = (mem[3] & 0x1F) | (this.value<<5);
+    } else {
+        mem[loc[0]] ^= loc[1];
+    }
+    
+    // bit parity
+   if (countBits(mem[0])%2) mem[3] |= 8; else mem[3] &= ~8;
+   if (countBits(mem[1])%2) mem[3] |= 4; else mem[3] &= ~4;
+   if (countBits(mem[2])%2) mem[3] |= 2; else mem[3] &= ~2;
+
+    // repair checksum
+    mem[4] = (mem[0]>>4) ^ (mem[0]&15) ^ (mem[1]>>4) ^ (mem[1]&15) ^ (mem[2]>>4) ^ (mem[2]&15) ^ (mem[3]>>4) ^ (mem[3]&15);
+
+    // encode
+    var nums = substitute(condense(mem, 1),1);
+    doIT(nums);
+}
+
+function doIT(nums) {
+    var cols = ['#CE0000','#7312B5','#009A21','#1843C6','#DE1800','#F76BDE','#109AF7','#FF9A21'];
+    for(var i = 0,y = true; i < tbl.length; i++) {
+        var d = nums[i]+1;
+        //tbl[i].contentEditable = "true";
+        tbl[i].textContent = d;
+        tbl[i].style.color = cols[d-1];
+        tbl[i].style.backgroundColor = cols[d-1]+'20';
+        //tbl[i].onkeypress = function(e) {
+        //    if(e.keyCode<48||e.keyCode>57)return false;
+        //    this.textContent = "";
+        //};
+    }
+
+    var what = substitute(nums);
+    mem = condense(what);
+    var mem2 = mem.slice();
+
+    //undo XOR for MEM2 display
+    var xorVal = mem2[3] >> 4;
+    var xor2 = mem2[3] >> 5;
+    var xorByt = (xorVal << 4) + xorVal;
+    mem2[0] ^= xorByt;
+    mem2[1] ^= xorByt;
+    mem2[2] ^= xorByt;
+
+    var _sum = arrhex(mem).replace(/ /g,'').split("");
+    for(var sum=0, i = 0; i < _sum.length-1; i++) {
+        sum ^= parseInt(_sum[i],16);
+    }
+
+    inf.innerHTML = `
+    <h4>Debug info</h4>
+    <h3>Internal password state</h3>
+    <code>${arrhex(nums)}</code>
+    <h3>Unscrambled</h3>
+    <code>${arrhex(what)}</code>
+    <h3>Raw Decoded Data (<i style=color:#999>preXOR</i>)</h3>
+    <code>${arrhex(mem)} (<i style=color:#999>${arrhex(mem2)}</i>)</code>
+    <h3>Checksum</h3>
+    <code>${sum === mem[4] ? `<b style=color:green>Valid</b> (${sum.toString(16).toUpperCase()})` : `<b style=color:red>Invalid</b> (${sum.toString(16).toUpperCase()})`}</code>`;
+
+    var labels = {
+         "3,16" :"Intro complete",
+         "3,1"  :"Hadouken",
+         "0,1"  :"Helmet Upgrade (Headbutt)",
+         "0,2"  :"Buster Upgrade (Super Charge)",
+         "0,4"  :"Body Upgrade (Armor)",
+         "0,8"  :"Leg Upgrade (Dash)",
+         "0,16" :"S-Tank: Storm Eagle",
+         "0,32" :"S-Tank: Armored Armadillo",
+         "0,64" :"S-Tank: Spark Mandrill",
+         "0,128":"S-Tank: Flame Mammoth",
+         "1,1"  :"Heart-Tank: Chill Penguin",
+         "1,2"  :"Heart-Tank: Armored Armadillo",
+         "1,4"  :"Heart-Tank: Storm Eagle",
+         "1,8"  :"Heart-Tank: Sting Chameleon",
+         "1,16" :"Heart-Tank: Flame Mammoth",
+         "1,32" :"Heart-Tank: Boomer Kuwanger",
+         "1,64" :"Heart-Tank: Spark Mandrill",
+         "1,128":"Heart-Tank: Launch Octopus",
+         "2,1"  :"Launch Octopus (Homing Torpedo)",
+         "2,2"  :"Sting Chameleon (Chameleon Sting)",
+         "2,4"  :"Armored Armadillo (Rolling Shield)",
+         "2,8"  :"Flame Mammoth (Fire Wave)",
+         "2,16" :"Storm Eagle (Storm Tornado)",
+         "2,32" :"Spark Mandrill (Electric Spark)",
+         "2,64" :"Boomer Kuwanger (Boomerang Cutter)",
+         "2,128":"Chill Penguin (Shotgun Ice)",
+    };
+
+    var ctrl = document.querySelector("div.contrl");
+    ctrl.innerHTML = "";
+    ctrl.appendChild(elem(["h3","Sub Tanks & Upgrades"]));
+    for(var i = 0 ; i < 1; i++) {
+        for(var j = 0; j < 8; j++) {
+            var chk = elem(["input",{whatevs:`0,${2**j}`,onchange:saveBits,checked:(mem[0]&2**j?"checked":""),type:"checkbox"}]);
+            chk.dataset['tooltip'] = labels[`0,${2**j}`];
+            ctrl.appendChild(chk);
+        }
+    }
+    ctrl.appendChild(elem(["h3","Heart Tanks"]));
+    for(var i = 0 ; i < 1; i++) {
+        for(var j = 0; j < 8; j++) {
+            var chk = elem(["input",{whatevs:`1,${2**j}`,onchange:saveBits,checked:(mem[1]&2**j?"checked":""),type:"checkbox"}]);
+            chk.dataset['tooltip'] = labels[`1,${2**j}`];
+            ctrl.appendChild(chk);
+        }
+    }
+    ctrl.appendChild(elem(["h3","Weapons Acquired"]));
+    for(var i = 0 ; i < 1; i++) {
+        for(var j = 0; j < 8; j++) {
+            var chk = elem(["input",{whatevs:`2,${2**j}`,onchange:saveBits,checked:(mem[2]&2**j?"checked":""),type:"checkbox"}]);
+            chk.dataset['tooltip'] = labels[`2,${2**j}`];
+            ctrl.appendChild(chk);
+        }
+    }
+    ctrl.appendChild(elem(["h3","Hadouken/Intro flag/Parity bits"]));
+
+    var el = elem(["input",{whatevs:`3,${2**0}`,onchange:saveBits,checked:(mem[3]&2**0?"checked":""),type:"checkbox"}]);
+    el.dataset['tooltip'] = labels[`3,${2**0}`];
+    ctrl.appendChild(el);
+
+    ctrl.appendChild(elem(["span",{innerHTML:" - "}]));
+    ctrl.appendChild(elem(["input",{disabled:true,whatevs:`3,${2**1}`,onchange:saveBits,checked:(mem[3]&2**1?"checked":""),type:"checkbox"}]));
+    ctrl.appendChild(elem(["input",{disabled:true,whatevs:`3,${2**2}`,onchange:saveBits,checked:(mem[3]&2**2?"checked":""),type:"checkbox"}]));
+    ctrl.appendChild(elem(["input",{disabled:true,whatevs:`3,${2**3}`,onchange:saveBits,checked:(mem[3]&2**3?"checked":""),type:"checkbox"}]));
+    ctrl.appendChild(elem(["span",{innerHTML:" - "}]));
+
+    var el = elem(["input",{whatevs:`3,${2**4}`,onchange:saveBits,checked:(mem[3]&2**4?"checked":""),type:"checkbox"}]);
+    el.dataset['tooltip'] = labels[`3,${2**4}`];
+    ctrl.appendChild(el);
+
+    ctrl.appendChild(elem(["span",{innerHTML:" - XOR: "}]));
+    ctrl.appendChild(elem(["select",{id:"xor",onchange:saveBits}],
+        elem(["option",{selected:xor2===0?"selected":"",innerHTML:"0"}]),
+        elem(["option",{selected:xor2===1?"selected":"",innerHTML:"1"}]),
+        elem(["option",{selected:xor2===2?"selected":"",innerHTML:"2"}]),
+        elem(["option",{selected:xor2===3?"selected":"",innerHTML:"3"}]),
+        elem(["option",{selected:xor2===4?"selected":"",innerHTML:"4"}]),
+        elem(["option",{selected:xor2===5?"selected":"",innerHTML:"5"}]),
+        elem(["option",{selected:xor2===6?"selected":"",innerHTML:"6"}]),
+        elem(["option",{selected:xor2===7?"selected":"",innerHTML:"7"}])
+        ));
+}
+
+inp.oninput = function() {
+    var clean = inp.value.replace(/[^1-8]/g, '');
+    if(inp.value=="") clean = '1'.repeat(12);
+    if(clean.length === 12) {
+        for(var nums = [],nums2 = [], i = 0; i < clean.length; i++) {
+            var num = Number(clean[i]);
+            if(num >= 1 && num <= 8) nums.push(num),nums2.push(num-1);
+        }
+        doIT(nums2);
+    }
+};
+
+var pad=(i,x=3,y=0)=>{return`${i}`.padStart(x,y)}
+var arrhex=a=>{return[].map.call(a,x=>x.toString(16).padStart(2,0)).join(" ").toUpperCase()}
+
+function hexToBytes(hex) {
+    hex = hex.replace(/ /g,'');
+    for (var bytes = [], c = 0; c < hex.length; c += 2)
+    bytes.push(parseInt(hex.substr(c, 2), 16));
+    return bytes;
+}
+
+function condense(nums, mode=0) {
+    function getKeyByValue(object, value) {
+      return Object.keys(object).find(key => object[key] === value);
+    }
+    var codeTable = {
+         '0,1':'4,8',
+         '0,2':'1,1',
+         '0,4':'0,32',
+         '1,1':'3,4',
+         '1,2':'2,8',
+         '1,4':'0,1',
+         '2,1':'3,32',
+         '2,2':'1,16',
+         '2,4':'0,128',
+         '3,1':'3,128',
+         '3,2':'2,16',
+         '3,4':'1,4',
+         '4,1':'4,2',
+         '4,2':'2,1',
+         '4,4':'0,4',
+         '5,1':'3,8',
+         '5,2':'2,64',
+         '5,4':'1,32',
+         '6,1':'4,1',
+         '6,2':'2,4',
+         '6,4':'0,2',
+         '7,1':'3,16',
+         '7,2':'2,32',
+         '7,4':'1,8',
+         '8,1':'4,4',
+         '8,2':'1,2',
+         '8,4':'0,8',
+         '9,1':'3,64',
+         '9,2':'2,2',
+         '9,4':'0,16',
+        '10,1':'3,2',
+        '10,2':'1,128',
+        '10,4':'0,64',
+        '11,1':'3,1',
+        '11,2':'2,128',
+        '11,4':'1,64'
+    };
+
+    if(mode === 1) { // undo xor
+            var xorVal = nums[3] >> 4;
+            var xorByt = (xorVal << 4) + xorVal;
+            nums[0] ^= xorByt;
+            nums[1] ^= xorByt;
+            nums[2] ^= xorByt;
+    }
+    for(var output, i = 0; i < nums.length; i++) {
+        if(mode === 0) {
+            if(!output) output = new Array(5).fill(0);
+            for(var j = 0; j < 3; j++) {
+                var p = `${i},${2**j}`;
+                var cool = codeTable[p].split(',').map(Number);
+                if((nums[i] & 2**j) > 0) output[cool[0]] |= cool[1];
+            }
+        } else if(mode === 1) {
+            if(!output) output = new Array(12).fill(0);
+            for(var j = 0; j < 8; j++) {
+                if(i===4 && j===4) break; // cant do last nibble
+                var p = `${i},${2**j}`;
+                var cool = getKeyByValue(codeTable,p).split(',').map(Number);
+                //console.log(p,i, j, nums[i], 2**j, (nums[i] & 2**j)>0, cool);
+                if((nums[i] & 2**j) > 0) output[cool[0]] |= cool[1];
+            }
+        }
+    }
+    if(mode === 0) {
+            var xorVal = output[3] >> 4;
+            var xorByt = (xorVal << 4) + xorVal;
+            output[0] ^= xorByt;
+            output[1] ^= xorByt;
+            output[2] ^= xorByt;
+    }
+    return output;
+}
+
+function substitute(nums, mode=0) {
+    var codeTable = [
+        [2,1,5,3,7,6,0,4],
+        [3,7,6,2,1,0,4,5],
+        [3,6,5,4,1,2,0,7],
+        [0,7,1,6,3,5,4,2],
+        [6,0,1,4,2,5,3,7],
+        [4,1,5,2,7,6,3,0],
+        [2,6,5,0,1,7,4,3],
+        [4,5,6,0,2,7,3,1],
+        [4,3,0,7,2,6,1,5],
+        [2,0,6,3,1,7,5,4],
+        [5,2,7,4,6,3,1,0],
+        [2,5,3,0,7,6,1,4],
+    ];
+
+    for(var newnums=[],i = 0; i < 12; i++) {
+        if(mode===0) 
+        newnums.push(codeTable[i][nums[i]])
+        else
+        newnums.push(codeTable[i].indexOf(nums[i]))
+    }
+    return newnums;
+}
+
+// init dummy data
+doIT(Array(12).fill(0));
+</script>
