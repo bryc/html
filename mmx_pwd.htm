@@ -47,32 +47,19 @@ The "XOR" value (0-7) merely changes the permutation of the final password (ther
 
 </div>
 <script>
-
 function elem(options) {
     var el = document.createDocumentFragment();
-    var tag = options[0];
-    var prop = options[1];
-
+    var tag = options[0],prop = options[1];
     if(typeof tag === "string") {
-        el = document.createElement(tag);
-    }
-
+        el = document.createElement(tag);}
     if(typeof prop === "object") {
         for (var item in prop) {
-            el[item] = prop[item];
-        }
-    } else if(prop) {
-        el.innerHTML = prop;
-    }
-
+            el[item] = prop[item];}
+    } else if(prop) {el.innerHTML = prop;}
     for(var i = 1; i < arguments.length; i++) {
         if(arguments[i].nodeType > 0) {
-            el.appendChild(arguments[i]);
-        }
-    }
-
-    return el;
-}
+            el.appendChild(arguments[i]);}}
+    return el;}
 
 var mem;
 tbl = document.querySelectorAll("table.mmx td");
@@ -83,12 +70,6 @@ function saveBits(e) {
     var countBits=n=>{var cnt=0;while(n)n&=n-1,cnt++;return cnt}
     var chked = this.checked;
     var loc = this.id=="xor" ? null : this.whatevs.split(',').map(Number);
-
-    var xorVal = mem[3] >> 4;
-    var xorByt = (xorVal << 4) + xorVal;
-    //mem[0] ^= xorByt;
-    //mem[1] ^= xorByt;
-    //mem[2] ^= xorByt;
 
     if(this.id=="xor") {
         mem[3] = (mem[3] & 0x1F) | (this.value<<5);
@@ -105,7 +86,7 @@ function saveBits(e) {
     mem[4] = (mem[0]>>4) ^ (mem[0]&15) ^ (mem[1]>>4) ^ (mem[1]&15) ^ (mem[2]>>4) ^ (mem[2]&15) ^ (mem[3]>>4) ^ (mem[3]&15);
 
     // encode
-    var nums = substitute(condense(mem, 1),1);
+    var nums = substitute(condense(mem),1);
     doIT(nums);
 }
 
@@ -257,108 +238,83 @@ function hexToBytes(hex) {
     return bytes;
 }
 
-function condense(nums, mode=0) {
-    function getKeyByValue(object, value) {
-      return Object.keys(object).find(key => object[key] === value);
+function condense(arr) {
+    if(arr && 12 === arr.length) {
+        var a = 12, b = 3, c = 5, t = [ // decodeTable
+        [4, 8],[1,  1],[0, 32],[3,  4],[2,  8],[0, 1],
+        [3,32],[1, 16],[0,128],[3,128],[2, 16],[1, 4],
+        [4, 2],[2,  1],[0,  4],[3,  8],[2, 64],[1,32],
+        [4, 1],[2,  4],[0,  2],[3, 16],[2, 32],[1, 8],
+        [4, 4],[1,  2],[0,  8],[3, 64],[2,  2],[0,16],
+        [3, 2],[1,128],[0, 64],[3,  1],[2,128],[1,64]
+        ];
+    } else if(arr && 5 === arr.length) {
+        var a = 5, b = 8, c = 12, t = [ // encodeTable
+        [ 1,4],[ 6,4],[ 4,4],[ 8,4],[9,4],[ 0,4],
+        [10,4],[ 2,4],[ 0,2],[ 8,2],[3,4],[ 7,4],
+        [ 2,2],[ 5,4],[11,4],[10,2],[4,2],[ 9,2],
+        [ 6,2],[ 1,2],[ 3,2],[ 7,2],[5,2],[11,2],
+        [11,1],[10,1],[ 1,1],[ 5,1],[7,1],[ 2,1],
+        [ 9,1],[ 3,1],[ 6,1],[ 4,1],[8,1],[ 0,1]
+        ], m = arr[3]>>4, n = m+(m<<4);
+        arr[0] ^= n, arr[1] ^= n, arr[2] ^= n; // de-XOR
+    } else {
+        throw "Input pattern invalid";
     }
-    var codeTable = {
-         '0,1':'4,8',
-         '0,2':'1,1',
-         '0,4':'0,32',
-         '1,1':'3,4',
-         '1,2':'2,8',
-         '1,4':'0,1',
-         '2,1':'3,32',
-         '2,2':'1,16',
-         '2,4':'0,128',
-         '3,1':'3,128',
-         '3,2':'2,16',
-         '3,4':'1,4',
-         '4,1':'4,2',
-         '4,2':'2,1',
-         '4,4':'0,4',
-         '5,1':'3,8',
-         '5,2':'2,64',
-         '5,4':'1,32',
-         '6,1':'4,1',
-         '6,2':'2,4',
-         '6,4':'0,2',
-         '7,1':'3,16',
-         '7,2':'2,32',
-         '7,4':'1,8',
-         '8,1':'4,4',
-         '8,2':'1,2',
-         '8,4':'0,8',
-         '9,1':'3,64',
-         '9,2':'2,2',
-         '9,4':'0,16',
-        '10,1':'3,2',
-        '10,2':'1,128',
-        '10,4':'0,64',
-        '11,1':'3,1',
-        '11,2':'2,128',
-        '11,4':'1,64'
-    };
-
-    if(mode === 1) { // undo xor
-            var xorVal = nums[3] >> 4;
-            var xorByt = (xorVal << 4) + xorVal;
-            nums[0] ^= xorByt;
-            nums[1] ^= xorByt;
-            nums[2] ^= xorByt;
-    }
-    for(var output, i = 0; i < nums.length; i++) {
-        if(mode === 0) {
-            if(!output) output = new Array(5).fill(0);
-            for(var j = 0; j < 3; j++) {
-                var p = `${i},${2**j}`;
-                var cool = codeTable[p].split(',').map(Number);
-                if((nums[i] & 2**j) > 0) output[cool[0]] |= cool[1];
-            }
-        } else if(mode === 1) {
-            if(!output) output = new Array(12).fill(0);
-            for(var j = 0; j < 8; j++) {
-                if(i===4 && j===4) break; // cant do last nibble
-                var p = `${i},${2**j}`;
-                var cool = getKeyByValue(codeTable,p).split(',').map(Number);
-                //console.log(p,i, j, nums[i], 2**j, (nums[i] & 2**j)>0, cool);
-                if((nums[i] & 2**j) > 0) output[cool[0]] |= cool[1];
-            }
+    
+    var n, m, out = new Uint8Array(c);
+    for(var i = 0, k = 0; i < a; i++) {
+        for(var j = 0; j < b; j++, k++) {
+            if(arr[i] & 2**j) out[t[k][0]] |= t[k][1];
         }
     }
-    if(mode === 0) {
-            var xorVal = output[3] >> 4;
-            var xorByt = (xorVal << 4) + xorVal;
-            output[0] ^= xorByt;
-            output[1] ^= xorByt;
-            output[2] ^= xorByt;
+    
+    if(12 === arr.length) {
+        m = out[3]>>4, n = m+(m<<4);
+        out[0] ^= n, out[1] ^= n, out[2] ^= n;
     }
-    return output;
+    
+    return out;
 }
 
-function substitute(nums, mode=0) {
-    var codeTable = [
-        [2,1,5,3,7,6,0,4],
-        [3,7,6,2,1,0,4,5],
-        [3,6,5,4,1,2,0,7],
-        [0,7,1,6,3,5,4,2],
-        [6,0,1,4,2,5,3,7],
-        [4,1,5,2,7,6,3,0],
-        [2,6,5,0,1,7,4,3],
-        [4,5,6,0,2,7,3,1],
-        [4,3,0,7,2,6,1,5],
-        [2,0,6,3,1,7,5,4],
-        [5,2,7,4,6,3,1,0],
-        [2,5,3,0,7,6,1,4],
-    ];
-
-    for(var newnums=[],i = 0; i < 12; i++) {
-        if(mode===0) 
-        newnums.push(codeTable[i][nums[i]])
-        else
-        newnums.push(codeTable[i].indexOf(nums[i]))
+function substitute(arr, mode = 0) {
+    if(arr && arr.length === 12 && 0 === mode) {
+        var tbl = [
+            [2,1,5,3,7,6,0,4],
+            [3,7,6,2,1,0,4,5],
+            [3,6,5,4,1,2,0,7],
+            [0,7,1,6,3,5,4,2],
+            [6,0,1,4,2,5,3,7],
+            [4,1,5,2,7,6,3,0],
+            [2,6,5,0,1,7,4,3],
+            [4,5,6,0,2,7,3,1],
+            [4,3,0,7,2,6,1,5],
+            [2,0,6,3,1,7,5,4],
+            [5,2,7,4,6,3,1,0],
+            [2,5,3,0,7,6,1,4]];
+    } else if(arr && arr.length === 12 && 1 === mode) {
+        var tbl = [
+            [6,1,0,3,7,2,5,4],
+            [5,4,3,0,6,7,2,1],
+            [6,4,5,0,3,2,1,7],
+            [0,2,7,4,6,5,3,1],
+            [1,2,4,6,3,5,0,7],
+            [7,1,3,6,0,2,5,4],
+            [3,4,0,7,6,2,1,5],
+            [3,7,4,6,0,1,2,5],
+            [2,6,4,1,0,7,5,3],
+            [1,4,0,3,7,6,2,5],
+            [7,6,1,5,3,0,4,2],
+            [3,6,0,2,7,1,5,4]];
+    } else {
+        throw "Input pattern invalid";
     }
-    return newnums;
+
+    for(var i = 0, out = []; i < 12; i++) {
+        out.push(tbl[i][arr[i]]);
+    }
+
+    return out;
 }
 
 // init dummy data
