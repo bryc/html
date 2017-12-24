@@ -228,15 +228,7 @@ inp.oninput = function() {
     }
 };
 
-var pad=(i,x=3,y=0)=>{return`${i}`.padStart(x,y)}
 var arrhex=a=>{return[].map.call(a,x=>x.toString(16).padStart(2,0)).join(" ").toUpperCase()}
-
-function hexToBytes(hex) {
-    hex = hex.replace(/ /g,'');
-    for (var bytes = [], c = 0; c < hex.length; c += 2)
-    bytes.push(parseInt(hex.substr(c, 2), 16));
-    return bytes;
-}
 
 function condense(arr) {
     if(arr && 12 === arr.length) {
