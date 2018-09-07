@@ -1,0 +1,37 @@
+<style>
+body{margin-top:10px;text-align:center;font:12px Tahoma}#err{padding:10px;color:#a00;background:#fff2f2}#suc{padding:10px;color:#0a0;background:#f2fff2}
+div{border-radius:4px;}
+img{margin:12px;}
+textarea{margin-top:10px;resize:vertical;}
+</style>
+<div style='padding:10px;color:#444;background:#eee;margin-bottom:5'><b style="display:inline-block;padding:2px;margin:8px;border-bottom:1px solid #BBB;font-size:16px">Clip2DataURI</b><br>Paste (<code>CTRL+V</code>) an <b>image</b> from your clipboard anywhere on this page. It'll give you the <code>data:image/png;base64,...</code> URI for it.</div>
+<div id=g></div>
+<script>
+document.addEventListener("paste", function (e) {
+  cb = e.clipboardData;
+  bw = cb.items.length;
+  if (!cb.items[0]) {
+    document.getElementById("g").innerHTML = "<div id=err><b>Invalid clipboard data</b><br>Whatever it is that's on your clipboard, it sure as hell isn't valid buddy!! You need to copy and paste an actual image into your clipboard (e.g. from Paint)</div>";
+    return;
+  }
+  for (t = i = 0; i < bw; ++i) {
+    if (cb.items[i]['type'].match(/image.*/)) {
+      t = i;
+    }
+  }
+  if (!cb || !cb.items[t]['type'].match(/image.*/)) {
+    document.getElementById('g').innerHTML = "<div id=err><b>Invalid MIME type</b><br>We only accept images, and <b>" + cb.items[t]['type'] + "</b> isn't one of those!</div>";
+    return;
+  }
+  a1 = cb.items[t].getAsFile();
+  document.getElementById('g').innerHTML = "Loading...";
+  size = Math.round(a1['size'] / 1024 * 100) / 100 + " kB";
+  type = a1['type'];
+  fr = new FileReader;
+  fr.readAsDataURL(a1);
+  fr.onloadend = function () {
+    disp = "<div id=suc><span style='display:inline-block'><b>Success!</b><br><span style='display:inline-block;padding:2px;margin:8px;border-bottom:1px solid #eee'>Image ("+size + ", " + type + ")</span><br><img id=h src='" + fr.result + "'></span><br><textarea style='word-wrap:break-word;width:900px;height:200px'>" + fr.result +  "</textarea></div>";
+    document.getElementById('g').innerHTML = disp;
+  }
+});
+</script>
