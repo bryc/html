@@ -17,61 +17,146 @@ hr{margin:24px 0;border:0;height:7px;background:#EEE;border-radius:12px;}
 
 <p>I've done a bit of experimenting before starting this article, and found that envelope generators play the biggest part of shaping the sound in FM (specifically the modulators). Volume or “Attentuation” of operators are also quite important. On modulators, they can the color of sound like a filter. Feedback (self-modulation) is also a characteristic feature of Yamaha FM. Frequency ratio multipliers are another big contributing factor to the sound color, and must be constrained to harmonic ratios to retain stable pitch tones. Some FM synths don't have these ratios which makes them less useful for harmonic sounds. I will be evaluating these aspects for each plugin.
 
-<p>But first, lets look at some good emulations for reference. I'm focusing on free plugins here, but the Arturia DX7 V is decent if you got $200.
+<p>But first, lets look at some of the better emulations as a reference. We can get very close with a few specific plugins. Also, I'm focusing on free plugins here, but there's quite a few commercial plugins worth looking at. Arturia DX7 V and FM7/FM8 seem pretty good and can import SysEx files.
 
 <hr>
 
 <h2>VOPMex</h2>
-<p>This is kind of cheating because it uses a YM2151 (OPM) emulator, so it's very close to the real thing. It's quite accurate as well, but it hasn't really been updated in years. I used it in my track <a href=https://soundcloud.com/bryc/shoulders-of-giants>On the Shoulders of Giants</a>.
+<p>To demonstrate the various FM synths, I'm using an excerpt of <i>Passing Breeze</i> from the OutRun arcade game. The goal for each plugin is to get as close to the same 'feel' as the instruments from that song. It's a rather well-done track using the YM2151 soundchip. The composer Hiroshi Kawaguchi employed a chorus effect by playing the melody with three slightly detuned voices, however to simplify things, I am only using a single voice on the lead, so it will sound cleaner than the original. But these are the <i>exact</i> patches and notes ripped directly from the game, playing in VOPM.
 
-<p>To demonstrate the various FM synths, I'm using an excerpt of <i>Passing Breeze</i> from the OutRun arcade game.
-It's a really well-done track using the YM2151 soundchip. The composer Hiroshi Kawaguchi employed a chorus effect by playing the melody with three slightly detuned voices, however I am only using a single voice on the lead, so it's cleaner than the original. But these are the <i>exact</i> patches and notes ripped directly from the game.
+<p>This is kind of cheating because VOPMex uses a YM2151 (OPM) emulator, so it's very close to the real thing. It's quite accurate as well, but it hasn't really been updated in years. I used it in my track <a href=https://soundcloud.com/bryc/shoulders-of-giants>On the Shoulders of Giants</a>.
 
 <div id=x><audio controls><source src=music/fmtests_breeze-vopm.opus></audio> <span>Passing Breeze - VOPMex</span></div>
 
-<p>Sounds just like the game, minus the drums. By the way, the FX stack I am using for all examples is a very light chorus, reverb/delay and a maximizer/limiter.
+<p>Sounds just like the game, but without the drums. By the way, the FX stack I am using for all examples is a very light chorus, reverb/delay and a maximizer/limiter.
 
 <h2>GENNY</h2>
 <p>Another cheating emulator here, except this time it's a YM2612. It's beta vaporware, full of bugs, but seems to work for the most part. It's based on an accurate emulator at least. It is a very similar chip that sounds nearly identical to YM2151 when not using special features.
 
 <div id=x><audio controls><source src=music/fmtests_breeze-genny.opus></audio> <span>Passing Breeze - GENNY</span></div>
 
-<p>The sound is a bit more distorted/scratchy than VOPM, especially in the lead. For the most part, the instrument data is compatible so it sounds very similar. However I found that decreasing <code>TL</code> slightly in OP3&4 will eliminate the distortion to the point where it sounds indistinguishable from VOPM. But the audio above doesn't reflect these changes as I want to stress that manual adjustments may be required when converting YM2151->YM2612.
+<p>The sound is a bit more distorted/scratchy than VOPM, especially in the lead. For the most part, the instrument data is compatible so it sounds very similar. However I found that decreasing <code>TL</code> slightly in OP3&4 will eliminate the distortion to the point where it sounds indistinguishable from VOPM. This also could be related to velocity/volume of notes, since decreasing that also reduces distortion. But the audio above doesn't reflect the adjustments as I want to stress that manual adjustments may be required when converting YM2151->YM2612. Maybe it's a bug in GENNY, but it could be something inherent in the chip.
 
 <h2>Dexed</h2>
-<p>Dexed is an emulation of the original Yamaha DX7. It's easy on CPU due to not being a "real" emulator like the two above, yet it's still very accurate. It's also open source (like VOPM) which is always nice. I used DXconvert to convert the OPM data to the sysex format Dexed understands. It sounds quite off in the MarkI or OPL engine, only the Modern 24-bit one. Go figure.
+<p>Dexed is an emulation of the original Yamaha DX7. It's easy on CPU due to not being a "real" emulator like the two above, yet it's still very accurate. It's also open source (like VOPM) which is always nice. I used DXconvert to convert the OPM data to the sysex format Dexed understands. It sounds quite off in the MarkI or OPL engine, only the Modern 24-bit one (Raph Levien's original engine). Go figure.
 
 <div id=x><audio controls><source src=music/fmtests_breeze-dexed.opus></audio> <span>Passing Breeze - Dexed</span></div>
 
-<p>It's much more smooth than the original, but it gets close and is higher fidelity. It's quite interesting how effective conversion between different FM synths can be. Although I tried converting DX100 presets to YM2151, and they ended up a little muted. They're acceptable, but I have no idea how close they are.
-
+<p>It's much more smooth than the original, but it gets close and is higher fidelity. It's quite interesting how effective conversion between different FM synths can be, despite having different parameter ranges. I tried converting DX100 presets to YM2151, and they ended up a little muted. They seem to sound better in Dexed, after conversion, which is surprising since I thought DX100 has more in common with YM2151 than DX7.
 
 <hr>
 
 <h2>Free FM synths</h2>
 <p>Now that we've been spoiled by the top contenders, let's look at some free plugins that have their own flavor of FM. I will evaluate how close they can get to typical Yamaha FM sounds, as well as note any enhanced features that go beyond classic Yamaha FM, such as additional feedback, waveforms and algorithms/matrixes. So it wont be all bad.
 
-<p>Do these ones:
+<h2>JuceOPLVSTi</h2>
+
+<p>This one is also an emulator, this time of the OPL3 (YMF262) chip. It has some significant limitations that make it incompatible with previous chips. The envelopes have less resolution, and each instrument consists of only 2 operators. To make up for these limitations, the OPL3 chip has additional waveforms for operators. There is also a special 4-op mode, but it's not usable in this plugin, and there's only four 4-op algorithms anyway (YM2151/YM2612 have 8).
+
+<p>Despite its limitations, it still uses the same FM process, so I get somewhat close in the following example:
+
+<div id=x><audio controls><source src=music/fmtests_breeze-juceopl3.opus></audio> <span>Passing Breeze - JuceOPLVSTi</span></div>
+
+<p>This actually highlights some interesting aspects of how algorithms work. All but the bass in the original use algorithm 5 (the bass uses algorithm 3). Algorithm 5 is really just two layers of 2-op FM, the same that exists in OPL3. That is, they're basically two 2-op instruments played together, but have only one feedback loop etc. The <b>Bell sound</b> combines a bell with a muted brassy sound underneath it. We can model the pure bell-like sound, but lose the brassy part. The <b>Lead sound</b> is quite close in particular, due to containing a very quiet woodwind sound at a lower octave. Loss of the second layer in the lead is almost unnoticable since it's so underpowered in the original. The chords and bell suffer a bit, since they aren't as "rich" as the original. And as for the bass, we can't get too close because there is more than one modulator being used in algorithm 3. But it still sounds good for an OPL3 rendition.
+
+<h2>VST2413</h2>
+
+<p>VST2413 is an emulator of the YM2413 (OPLL) chip. It implements the same 2-op FM synthesis as JuceOPLVSTi, but only has 2 waveforms instead of 8 (specifically sine and half-sine). So we are more limited here. It's also pretty noisy and slightly out of tune.. wouldn't recommend it.
+
+<div id=x><audio controls><source src=music/fmtests_breeze-vst2413.opus></audio> <span>Passing Breeze - VST2413</span></div>
+
+<h2>mda DX10</h2>
+
+mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it overly metallic or plasticy. It just seems incapable of doing smooth FM sounds, and seems more suited for like acid techno or something like that. It lacks a feedback loop feature, applies modulation very differently, and has a strange/incomplete envelope implementation, which makes it basically impossible to do a decent brass sound.
+
+<div id=x><audio controls><source src=music/fmtests_breeze-dx10.opus></audio> <span>Passing Breeze - DX10</span></div>
+
+<i>(no audio yet, gonna tweak the sounds further to ensure I get the best sound out of DX10.)</i>
+
+<h2>FEM</h2>
+
+<p>This one is strangely atonal, but I want to get it out of the way. Then after all the others, I need to do PM4 and FMMF specifically, then K200. 
+
+
+
+<h2>Vivaldi</h2>
+<p>Will do Vivaldi next. Vivaldi also implements 2-op FM, but in a slightly different way. It also allows for some cheating, since it allows up to 4 layers of 2-op instruments. I will explore 2 layers only, to simulate algorithm 5 on the YM2151. Vivaldi MX is an updated version with multitimbrality and some other cool features, but for this we are using the original.
+
+<h2>Uno FM</h2>
+<p>This is another strange one. It has only two ADSR envelopes (Carrier and FM), but 3 sine modulators and a carrier(?). The level and pitch of the modulators can be changed individually, but there is no feedback loop or algorithms here. Also has a ring modulator apparently. However it sounds better than DX10.
+
+<h2>JewelSynth</h2>
+<p>This is a 2-op synth, made by same creator of Vivaldi. It's mostly GUI-oriented, but I thought I'd explore its sound. 
+
+<h2>FM-Four</h2>
+<p>A 4-op synth with some odd limitations. No feedback loop, and no individual modulator envelope loops..
+
+<h2>Ganymed</h2>
+<p>A 4-op synth. Big brother to Vivaldi. I think it also cheats by having two layers, but we will only be using one layer.
+
+
+<hr>
+
+<h2>FMMF</h2>
+<p>This one seemed a bit odd, so I want to do this one here.
+
+<h2>Panzertank PM4</h2>
+<p>Another oddity to get out of the way.
+
+<h2>GTG FM4</h2>
+<p>A 3-op synth. Seemed ok at first glance but we'll have a look.
+
+<h2>K200</h2>
+<p>Another one to do.
+
+<hr>
+
+<h2>eFemme</h2>
+<p>This one seemed good. I want to do this one a bit further in, after I get a bit experience from the others, to truly evaluate it.
+
+<h2>Purple</h2>
+<p>A 4-op synth with many buttons and possibly some bugs. It has 3 versions as well, so leaving it to the end here.
+
+<hr>
+
+<h2>discoDSP Phantom</h2>
+<p>This is a commercial 4-op FM synth. Also want to have a look at this one
+
+<h2>VX7</h2>
+<p>An unreleased beta/demo, has some missing features. However, it's 6-op and is supposed to model the Yamaha SY-77. Algorithms don't seem interchangable. And the FM engine seems a bit weak.. But I want to do this one here before moving up into the freeform 6-ops.
+
+<h2>Six / Double Six</h2>
+<p>Another one I want to get out of the way here. It's 6-op but uses 32 DX7 algorithms. Would like to determine the differences between Six Full and the various Double Six's, to see which is the definitive version.
+
+<h2>FMHeaven</h2>
+<p>6-op, free-form algorithms in a modulation matrix. A bunch of waveforms.
+
+<h2>Oxe FM</h2>
+<p>6-op, free-form algorithms in a modulation (half?) matrix. A handful of waveforms
+
+<h2>Foorius</h2>
+<p>4-op, free-form algorithms in a modulation matrix. Has deep waveshaping capabilities. Tons of envelopes and LFOs.
+
+<h2>NI FM7</h2>
+<p>Not free, but is a classic, powerful softsynth worth checking out. 6-op (?), free-form algorithms in a modulation matrix. A bunch of waveforms.
+
+<hr>
+
+<p>So that's pretty much it for simple or free FM synths. FM7 is really cutting it close, but it may still qualify. It would be interesting to see how a lot of the 6-op synths stack up to the <b>AFM</b> sounds from Yamaha SY-77 (but not the AWM2 part). Yamaha also released an 8-op FS1R, which also ended up as the basis for the FM-X engine in Montage (which also uses AWM2). I also left out "Xen-FMTS", because it uses weird intonation systems and stuff.
+
+ <p>There are more synths which utilize FM, but they go beyond what is typical of classic Yamaha FM (and sometimes combine different synthesis), but should be mentioned here as well.
 
 <ol>
-    <li>mda DX10
-    <li>Vivaldi
-    <li>Ganymed
-    <li>Uno FM
-    <li>FM-Four
-    <li>Purple 2.0
-    <li>Double Six / Six
-    <li>VST2413 (emulator)
-    <li>JuceOPLVSTi (emulator)
-    <li>eFemme
-    <li>Xen FMTS 2
-    <li>K200
-    <li>GTG FM 4
-    <li>VX7
-    <li>discoDSP Phantom (technically not free, but relevant)
-    <li>Adonis
-    <li>Foorius
-    <li>FMMF
-    <li>Oxe FM
-    <li>Panzertank PM4
+    <li>FM8 (6-op, pure FM? with tons of advanced functions)
+    <li>Sytrus (6-op, FM/RM/Subtractive)
+    <li>Nemesis (4-op "NeoFM", FM/Additive/Formant/Wavetable/Waveshaping/Phase distortion) - quite a monster
+    <li>Rhino (6-op, FM/Additive/Waveshaping/soundfont/Analog)
+    <li>Toxic Biohazard (6-op, FM/Subtractive)
+    <li>LinPlug Octopus (8-op)
+    <li>Aurora FM (6-op, Pure DX7-like FM with DX11 waveforms + more modulations)
+    <li>u-he Bazille (4-op, FM/Phase distortion/Fractual Resonance? + full modular cables + more)
+    <li>Cypher (3-op, FM/waveshaper and some stuff.)
+    <li>Rob Papen Blue II (6-op, FM/Subtractive/Phase distortion/Waveshaping/additive?)
+    <li>RedLion (8-op, $80! rather simple, only 12 algorithms but has wave knobs..)
+    <li>Portafm (2-op) - extremely polished OPLL emulator, worth looking into?
 </ol>
