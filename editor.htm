@@ -1,7 +1,7 @@
-<link rel="icon" type="image/png" href="http://i.imgur.com/2D3uk7N.png">
-<script src="//code.jquery.com/jquery-1.12.4.js"></script>
-<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/ace.js"></script>
+<link rel="icon" type="image/png" href="https://i.imgur.com/2D3uk7N.png">
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js"></script>
 
 <style>
 body,html {height:100%}
@@ -14,14 +14,14 @@ iframe#Out {min-width:0%;flex:1;border:0}
 
 .handle {
     width:7px;border-left:1px solid #FFF;cursor:col-resize;
-    background: #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFAQMAAAC+ShTcAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAA1JREFUCNdjaGBggGAAB4oBgcVtFeYAAAAASUVORK5CYII=) no-repeat center;
+    background: #555 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAFCAQAAAAujU4UAAAAD0lEQVR42mP4/58BCGAkACziBfue2Hx5AAAAAElFTkSuQmCC) no-repeat center;
 }
 </style>
 
 <script>
 window.addEventListener("load", function() {
 
-    var Ace, code, timer, timer2, out, store,
+    var Ace, code, timer, timer2, out, store, tog = false,
         isNew = (window.location.search === "?new"),
         lsUpdateTimer  = 2000;  // Update localStorage in 2 seconds
         ifUpdateTimer  = 50;    // Update iframe in 50 milliseconds
@@ -66,12 +66,17 @@ window.addEventListener("load", function() {
     
     $("#Ace").resizable({ 
         handles : {s : $(".handle")},
-        resize: function() {$("#Ace").css("height","100%") },
+        resize: function() {
+            $("#Ace").css("height","100%");
+            var widthh = parseInt(Ace.container.style.width, 10)
+            if(widthh <= 10) { tog = true; $("#Ace").css("display", "none"); }
+            else if(tog) { tog = false; $("#Ace").css("display","block"); }
+        },
         start:  function() {$("#Out").css("pointer-events","none")},
         stop:   function() {$("#Out").css("pointer-events","")}
     });
     
-    document.addEventListener("keydown", function(event) {
+    /*document.addEventListener("keydown", function(event) {
         if (event.keyCode == 20 && event.ctrlKey) { 
            if($("#Ace").css("display") === "block") {
                $("#Ace").css("display", "none");
@@ -82,7 +87,7 @@ window.addEventListener("load", function() {
                Ace.focus();
             } 
         }
-    });
+    });*/
 });
 </script>
 
