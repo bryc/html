@@ -1,0 +1,199 @@
+﻿<style>
+body{font:14px Segoe UI,Trebuchet MS,Tahoma,sans-serif;color:#747C62;background:#E0D9CB}
+h1{flex-grow:1;margin:0;text-align:center}
+a,h1{font-style:italic;color:#342}
+.box{margin:auto;width:475px;display:flex;flex-wrap:wrap;transform:scale(2) translate(0,50px)}
+.fix{white-space:nowrap;flex-grow:1}
+svg{height:40px;width:40px;border-radius:64px;background:linear-gradient(#666,#111);margin:1}
+svg[q]{display:none}
+.floaty{border:2px solid rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;border-radius:5px;padding:4px;margin:2px;background:#F5F3EE}
+label{display:block}
+label b{font-weight:400;display:inline-block;width:50px}
+select{display:inline-block;width:50px}
+img#lr{padding:12px;animation: wig0 8s infinite}
+img#lr:hover{cursor:pointer;filter:brightness(200%) drop-shadow(5px 5px 5px rgba(0,0,0,0.5));animation:wig 0.45s infinite}
+img#lr:active{animation:wig2 .2s 1;}
+svg,.floaty,img,h1{filter:brightness(100%);filter:drop-shadow(5px 5px 5px rgba(0,0,0,0.2))}
+
+
+@keyframes wig0 {
+  0% { transform: rotate(0deg) }
+ 51% { transform: rotate(0deg); filter:drop-shadow(5px 5px 5px rgba(0,0,0,0.2)) brightness(100%) }
+ 52% { transform: rotate(8deg) }
+ 53% { transform: rotate(12deg) }
+ 54% { transform: rotate(-8deg); filter:drop-shadow(3px 3px 0px rgba(0,0,0,0.6)) brightness(220%) }
+ 55% { transform: rotate(0deg); filter:drop-shadow(5px 5px 5px rgba(0,0,0,0.2)) brightness(100%) }
+100% { transform: rotate(0deg) }
+}
+
+@keyframes wig {
+  0% { transform: rotate(0deg) }
+ 25% { transform: rotate(5deg) scale(1.1) }
+ 75% { transform: rotate(-5deg) scale(0.9) }
+100% { transform: rotate(0deg) }
+}
+
+@keyframes wig2 {
+  0% { transform: rotate(0deg) }
+ 15% { transform: rotate(5deg) scale(2,3) skew(-15deg) translate(5px, -23px) }
+ 11% { filter:blur(1px) brightness(400%) }
+ 99% { transform: translate(0, 0) scale(1); filter:brightness(200%) }
+100% { transform: rotate(0deg) }
+}
+
+</style>
+
+<title>Lomax Password Generator</title>
+
+<svg q>
+<symbol id=0 viewBox="0 0 20 20"><path fill=#3BB d="M10 5.9l2 3.3 1.9 3.4H6.2l2-3.4L10 6m0-3.5l-3.4 6-3.5 6H17l-3.5-6-3.5-6z">
+<symbol id=1 viewBox="0 0 20 20"><path fill=#C33 d="M10 5.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6m0-2a6.7 6.7 0 1 0 0 13.5 6.7 6.7 0 0 0 0-13.4z">
+<symbol id=2 viewBox="0 0 20 20"><path fill=#C69 d="M14.1 5.9V14H6V6H14m2-2H4V16h12V4z">
+<symbol id=3 viewBox="0 0 20 20"><path fill=#89E d="M16.1 5.6L14.5 4l-4.4 4.5L5.6 4 4 5.6l4.5 4.5L4 14.5l1.6 1.6 4.5-4.4 4.4 4.4 1.6-1.6-4.4-4.4z">
+</svg>
+
+<div class="box"><h1>Lomax Password Generator</h1>
+<div class="floaty">
+
+<label for="Stage"><b>Stage:</b>
+<select id="Stage">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>17</option>
+<option>18</option>
+<option>19</option>
+<option>20</option>
+<option>21</option>
+<option selected>22</option>
+</select>
+    
+<label for="Lives"><b>Lives:</b>
+<select id="Lives">
+<option>0</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>17</option>
+<option>18</option>
+<option>19</option>
+<option>20</option>
+<option>21</option>
+<option>22</option>
+<option>23</option>
+<option>24</option>
+<option>25</option>
+<option>26</option>
+<option>27</option>
+<option>28</option>
+<option>29</option>
+<option>30</option>
+<option selected>31</option>
+</select>
+</label>
+
+<label for="Credits"><b>Credits:</b>
+<select id="Credits">
+<option>0</option>
+<option>1</option>
+<option>2</option>
+<option selected>3</option>
+</select>
+</label>
+
+</div>
+
+<div class="floaty fix" id="Result"><div>Result here</div></div>
+<br>
+<div class="floaty txt">
+<img id="lr" width=52 height=48 src="data:image/png;base64,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">
+
+<div>This is a quick-n-dirty password generator for the game <a target=_blank href="https://en.wikipedia.org/wiki/The_Adventures_of_Lomax">The Adventures of Lomax</a>.
+Passwords can be used for both the PS1 and Windows versions.
+I'll probably rewrite this to be ASM accurate and include a decoder at some point.</div>
+
+</div>
+</div>
+
+<script>
+// Disclaimer: This is a heavily modified version of a generator I found years ago.
+// It may have been made by WNivek around 2007, and if so, it's based on this GameFAQ:
+// https://gamefaqs.gamespot.com/ps/196548-the-adventures-of-lomax/faqs/40484
+
+let Elm = document.querySelectorAll("select");
+
+function genLomaxPwd() {
+    let Stage   = Elm[0].value,
+        Lives   = Elm[1].value,
+        Credits = Elm[2].value,
+        Output  = "";
+
+    Stage--; // Fix num to zero
+
+    /* Extract relevant bits */
+    let S0 = 3 & Stage,
+        S1 = 3 & Stage >> 2,
+        S2 = 1 & Stage >> 4,
+        L0 = 1 & Lives,
+        L1 = 3 & Lives >> 1,
+        L2 = 3 & Lives >> 2, // Unused?
+        L3 = 3 & Lives >> 3,
+        C0 = 3 & Credits;
+
+    // Build password symbols
+    let Symbols = [
+        S0 ^ S2 ^ (L0 << 1) ^ L3 ^ 2,
+        (C0 ^ 3) ^ S1 ^ L1,
+        S0,
+        S1,
+        (S2 ^ 1) + (L0 << 1),
+        L1 ^ 3,
+        L3 ^ 1,
+        C0
+    ];
+
+    Symbols.forEach(s => { Output += `<svg id=s${s}><use href=#${s}></svg>`; });
+    document.querySelector("#Result div").innerHTML = Output;
+}
+
+window.onload   = genLomaxPwd;
+Elm[0].onchange = genLomaxPwd;
+Elm[1].onchange = genLomaxPwd;
+Elm[2].onchange = genLomaxPwd;
+
+document.querySelector("div.floaty img").onclick = function() {
+    Elm[0].value = 1 + Math.random() * 22 | 0;
+    Elm[1].value = Math.random() * 32 | 0;
+    Elm[2].value = Math.random() * 4 | 0;
+
+    Elm[0].dispatchEvent(new MouseEvent("change"));
+    Elm[1].dispatchEvent(new MouseEvent("change"));
+    Elm[2].dispatchEvent(new MouseEvent("change"));
+}
+</script>
