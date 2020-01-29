@@ -1,123 +1,101 @@
-<h2>Classic Bubble Bobble Password Generator</h2>
+<!--
+Classic Bubble Bobble (GBC) Password Generator
+**********************************************
+Credit: (c) bryc 2015-2020 (github.com/bryc)
 
-<div class=colTitle>Password</div>
-<div class=row>
-    <input maxlength=4 id=pw>
-</div>
+Jan 28 2020 - new theme
+  cleaned and optimized the code overall
+Mar 24 2016 - new version of bubble bobble pw generator
+  more efficient encoder/decoder for charset
+  new rotate method based on strings (faster, better than array)
+  more accurate checksum algorithm, modulo 23.
 
-<div id=wrap>
-    <div class=col>
-        <div class=colTitle>World</div>
-        <input value=0 id=world min=0 max=23 type=number>
-    </div>
-    
-    <div class=col>
-        <div class=colTitle>Stage (Low)</div>
-        <input value=0 id=stageLO min=0 max=23 type=number>
-    </div>
-    
-    <div class=col>
-        <div class=colTitle>Stage (Hi)</div><br>
-        <input value=0 id=stageHI min=0 max=23 type=number>
-    </div>
-</div>
+NOTES:
+* The game rejects passwords leading to undefined stages. Highest possible stage is 60 on world 0.
+* Due to an overflow issue, some stages can have two passwords for the same level. (Hi=1,Lo=0) = (Hi=0,Lo=16)
+  Some passwords found online break the overflow rule, so this could be by design. This appears to limit
+  the maximum number of addressable stages. (23<<4)+23 (392) vs 24^2 (576).
 
-<div class=colTitle>Decoded Info</div>
-<div id=info class=row2></div>
-
+TODO:
+* Generate list of passwords which lead to the same stage
+-->
 <style>
-    body{
-        margin:0 10%;
-        font-family:arial;
-        background:#5D5;
-        color:#333;
-        font-size:24px;
-    }
-    div#wrap {
-        display:flex;
-    }
-    div.col {
-        display:flex;
-        flex-wrap:wrap;
-        flex-grow:1;
-    }
-    div.colTitle{flex-wrap:wrap;flex-grow:1;text-align:center;font-weight:bold;}
-    div.row{display:flex;text-align:center;}
-    div.row2,h2{text-align:center;}
-    input#pw{font-family:consolas;}
-    #info{min-height:60px;padding:4px;background:rgba(255,255,255,0.5);}
-    input{
-        outline:none;border:none;text-align:center;background:#FFF;
-        width:100%;margin:2px;
-        padding:24px;
-        font-size:28px;
-    }
+#box {
+    font:18px Trebuchet MS,sans-serif;text-align:center;
+    margin:auto;max-width:896px;
+}
+.red {text-decoration:underline;color:#E00}
+div#wrap {column-count:3;column-gap:4px}
+#box h3 {display:inline-block;white-space:nowrap;font-size:1.2em}
+#box h1,#box h3, p {margin:6px}
+#box input,#info {
+    padding:11px;
+    background:#FFF linear-gradient(#dde2,#2252);
+    border:3px solid #DDD;border-radius:6px;
+}
+#box input{outline:none;text-align:center;width:100%;font-size:1.7em}
+#box input:focus {background-color:#F3F3F3}
+#pword {font-family:Consolas,monospace}
 </style>
 
+<div id=box>
+<h1>Classic Bubble Bobble (GBC)</h1>
+<p>A password encoder/decoder for the game Classic Bubble Bobble for GBC. Code by <a href=http://github.com/bryc>@bryc</a>.</p>
+<h3>Password</h3>
+<div id=pwdbox><input id=pword maxlength=4 spellcheck=false></div>
+
+<div id=wrap>
+<h3>Stage (Low)</h3>
+<input id=stageLO value=0 min=0 max=23 type=number>
+<h3>World</h3>
+<input id=world value=0 min=0 max=23 type=number>
+<h3>Stage (High)</h3>
+<input id=stageHI value=0 min=0 max=23 type=number>
+</div>
+
+<h3>Info</h3>
+<div id=info></div>
+</div>
+
 <script>
-// March 24 2016 - new version of bubble bobble pw generator
-// - more efficient encoder/decoder for charset
-// - new rotate method based on strings (faster, better than array)
-// - more accurate checksum algorithm, modulo 23.
-// TODO:
-// Add indicator of invalid decode (done)
-// Cleanup layout (Done)
-// Beef up the Decoding/Encoding functions with more checking (Done)
-// Cleanup UI code
-// AIO stage select (4 bit mode?) with advanced switch for LO/HI edit?
-// Scan passwords, find passwords that go to same stage
-
-/* Note on byte overflow of Stage number:
--------------------------
-The stage number is decoded using the following formula: (Hi << 4) + Lo
-Because of this, there is a maximum theoretical limit of 392 stages (23<<4)+23
-(If all possible values were utilized, that limit would be 576 or 24^2)
-
-Because the Game Boy Color is an 8-bit machine, its very probable that 
-this value is stored in a byte, which has a limit of 255, meaning an overflow can occur.
-
-An overflow will occur if Hi is greater than 15.
-An overflow will also occur if Hi is 15 and Lo is greater than 15.
-
-Because of the way the stage decoding works, you can access the same stage using two passwords,
-because Hi=1,Lo=0  is the same as Hi=0,Lo=16.
-
-In most cases, the game sets Lo only to 0-15, but some passwords on GameFAQs break this rule,
-meaning some version of the game possibly uses 16-23 Lo values.
-
-Of course, the game checks and rejects any stage that does not exist. Highest possible stage is 60 on world 0.
-*/
-
 /* ****************************************
-    Main password decoding/encoding functions */
+Main password decoding/encoding functions */
 
-function baseconv(input) {
-    var chars = "BCDFGHJKLMNPQRSTVWXZ1345";
-    return typeof input=='string' ? chars.indexOf(input) : chars[input];
+// Exploit string index for easy base swapping
+function baseconv(n) {
+    var chr = "BCDFGHJKLMNPQRSTVWXZ1345";
+    return typeof n === "string" ? chr.indexOf(n) : chr[n];
 }
 
+// Rotate string, modulo 3
+// Possible bug: rotate("ABCD", 3) = "ABC"
 function rotate(str, n) {
-    var a = n % 3, b = a>0 ? 3-a : -a;
-    return str.substr(b, 3) + str.substr(0, b);
+    n %= 3, n = n > 0 ? 3-n : -n;
+    return str.substr(n, 3) + str.substr(0, n);
 }
 
-function decodePass(Password) {
-    // Validate input
-    if (!/^[BCDFGHJKLMNPQRSTVWXZ1345]{4}$/.test(Password)) {return false;}
-    // First read the check digit
-    var checkDigit = baseconv(Password[0]);
-    var shift = checkDigit & 3;
-    // Unshift the password
-    var unshifted = rotate(Password.substr(1), -shift);
-    var StageLO = baseconv(unshifted[0]);
-    var World   = baseconv(unshifted[1]);
-    var StageHI = baseconv(unshifted[2]);
+function decodePass(pword) {
+    // Validate input: 4 chars of specific charset. Overkill but still useful.
+    if (!/^[BCDFGHJKLMNPQRSTVWXZ1345]{4}$/.test(pword)) {return false}
+
+    // First read the check digit and isolate shift digit
+    var checkDigit = baseconv(pword[0]), shift = checkDigit & 3;
+
+    // Unshift the remaining password using the shift digit
+    var unshift = rotate(pword.substr(1), -shift);
+    var StageLO = baseconv(unshift[0]);
+    var World   = baseconv(unshift[1]);
+    var StageHI = baseconv(unshift[2]);
+
     // Check if new check digit matches the stored one
-    var newCheck =  (StageLO + World + StageHI) % 23;
-    if(checkDigit !== newCheck) {return false;}
+    var newCheck = (StageLO + World + StageHI) % 23;
+    if(checkDigit !== newCheck) {
+        dest.nfo.innerHTML = `<b>Invalid password: Bad checksum</b><br>Fixed checksum: ${baseconv(newCheck)+pword.substr(1)}`;
+        return false;
+    }
 
     return {
-        Password: Password,
+        Password: pword,
         decoded: {StageLO: StageLO, World: World, StageHI: StageHI, checkDigit: checkDigit},
         World: World,
         Stage: (StageHI << 4) + StageLO
@@ -125,9 +103,9 @@ function decodePass(Password) {
 }
 
 function encodePass(StgLO, Wrld, StgHI) {
-    // Validate input (0-23)
-    function chk(a) {return (a>23||a<0)||(a|0)!==a;}
-    if(chk(StgLO)||chk(Wrld)||chk(StgHI)) {return false;}
+    // Terminate if input is invalid (must be 0-23)
+    function chk(a) {return a > 23 || a < 0}
+    if(chk(StgLO) || chk(Wrld) || chk(StgHI)) {return false}
 
     var Stage = (StgHI << 4) + StgLO;
     var checkDigit = (StgLO + Wrld + StgHI) % 23;
@@ -143,67 +121,67 @@ function encodePass(StgLO, Wrld, StgHI) {
 }
 
 /* ****************************************
-    User Interface functionality */
+User Interface functionality */
 
-var dest = function(i) {return document.getElementById(i);}, dest = {
-    pw: dest("pw"),
-    slo: dest("stageLO"),
-    shi: dest("stageHI"),
-    w: dest("world"),
-    info: dest("info")
-};
+var dest = function(i){return document.getElementById(i)};
 
 function doEncode() {
-
-    var invalid = false;
-    var slo = parseInt(dest.slo.value);
-    var shi = parseInt(dest.shi.value);
-    var w = parseInt(dest.w.value);
-
-    var PASS = encodePass(slo, w, shi);
-    if(PASS === false) {return false;}
-    var World = PASS.World + 1;
-    var Stage = PASS.Stage + 1;
-
-    dest.pw.value = PASS.Password;
-    dest.info.innerHTML = "Stage: <b> "+ Stage + " </b> World: <b>"+World+"</b><br>"
-    + "Checksum: "+PASS.decoded.checkDigit+", Shift: "+(PASS.decoded.checkDigit&3);
-
-    if(World === 1 && (Stage < 1 || Stage > 60)) {invalid = true;}
-    if(World === 2 && (Stage < 2 || Stage > 51)) {invalid = true;}
-    if(World === 3 && ((Stage < 26 || Stage > 34) && (Stage < 43 || Stage > 51)) ) {
-        invalid = true;
+    var PASS = encodePass(+dest.slo.value, +dest.wld.value, +dest.shi.value);
+    if(!PASS) {
+        dest.nfo.innerHTML = "<b>Encode error<br>Invalid value range</b>";
+        return false;
     }
-    if(World > 3 || World < 1) {invalid = true;}
-    if(invalid === true) {
-        dest.pw.style.color = 'red';
+
+    dest.pwd.value = PASS.Password;
+    var Wrl = PASS.World + 1, Stg = PASS.Stage + 1;
+    // Print information to screen.
+    dest.nfo.innerHTML = "Stage: <b>" + Stg + "</b> World: <b>" + Wrl + "</b><br>"
+    + "Checksum: " + PASS.decoded.checkDigit + ", Shift: " + (PASS.decoded.checkDigit & 3);
+
+    // Rudimentary password validation, doesn't necessarily match game's behavior
+    var invalid = false;
+    if(Wrl===1 && (Stg<1 || Stg>60)) {invalid = true}
+    if(Wrl===2 && (Stg<2 || Stg>51)) {invalid = true}
+    if(Wrl===3 && (Stg<26 || Stg>34) && (Stg<43 || Stg>51)) {invalid = true}
+    if(Wrl>3 || Wrl<1) {invalid = true}
+
+    if(invalid) {
+        dest.pwd.className = "red";
+        dest.nfo.innerHTML += "<br><b>Stage doesn't exist</b>";
     } else {
-        dest.pw.style.color = '';
+        dest.pwd.className = "";
     }
 }
 
 function doDecode() {
-    var invalid = false;
     this.value = this.value.toUpperCase();
-    this.value = this.value.replace(/[AEIOUY267890]/gi,'');
-    if (/^[BCDFGHJKLMNPQRSTVWXZ1345]{4}$/.test(this.value)===false) {invalid = true;}
-
-    if(invalid === false) {
+    this.value = this.value.replace(/[AEIOUY267890]/gi,"");
+    if (/^[BCDFGHJKLMNPQRSTVWXZ1345]{4}$/.test(this.value)===false) {
+        dest.nfo.innerHTML = "<b style=display:block;margin:11px>Enter a valid password (4 chars)</b>";
+        dest.pwd.className = "";
+    } else {
         var PASS = decodePass(this.value);
-        if(PASS===false) {dest.pw.style.color = 'red';return false;}
-        dest.w.value = PASS.decoded.World;
+        if(!PASS) {dest.pwd.className = "red"; return false}
+        dest.wld.value = PASS.decoded.World;
         dest.slo.value = PASS.decoded.StageLO;
         dest.shi.value = PASS.decoded.StageHI;
         doEncode();
-    } else {
-        dest.info.innerHTML = '';
-        dest.pw.style.color = '';
     }
 }
 
-window.onload = doEncode;
-dest.slo.oninput = doEncode;
-dest.shi.oninput = doEncode;
-dest.w.oninput = doEncode;
-dest.pw.oninput = doDecode;
+window.onload = function() {
+    dest = {
+        pwd: dest("pword"),
+        slo: dest("stageLO"),
+        shi: dest("stageHI"),
+        wld: dest("world"),
+        nfo: dest("info")
+    };
+
+    dest.pwd.oninput = doDecode;
+    dest.slo.oninput = doEncode;
+    dest.shi.oninput = doEncode;
+    dest.wld.oninput = doEncode;
+    doEncode();
+};
 </script>
