@@ -48,15 +48,19 @@ a{color:#705136;}
 
 <p>The audio above reflects the 1:1 translation of the patch. The sound is a bit more distorted/growly than VOPM, especially in the lead. <s>Probably a bug in GENNY</s>--Actually it's due to the YM2612's DAC, it sounds clean on a YM2608. The operators are mis-labelled as well, and velocity sensitivity is screwed. At the very least, the instrument data is partly transferable so it sounds similar. Decreasing <code>TL</code> slightly in OP3&4 (mislabelled C1/C2) will eliminate the distortion to the point where it sounds indistinguishable from VOPM. However, there is no way to reduce global volume, which is <i>actually</i> possible on a tracker...
 
+<h2>OPNplug</h2>
+
+<p>TODO: OPNplug is another free plugin which can emulate YM2612 / YM2608, would be interesting to compare here.
+    
 <h2>Dexed</h2>
 <div id=x><audio controls><source src=music/fmtests_breeze-dexed.opus></audio> <span>Passing Breeze - Dexed</span></div>
 <p>Dexed is an emulation of the original Yamaha DX7. It's easy on CPU due to not being a "real" emulator like the two above, yet it's still very accurate. It's also open source (like VOPM) which is always nice. I used <a target=_blank href="http://dxconvert.martintarenskeen.nl/">DXconvert</a> to convert the OPM data to the sysex format Dexed understands. It sounds quite off in the MarkI or OPL engine, only the Modern 24-bit engine sounds correct (Raph Levien's original engine). Go figure.
 
 <p>It's much smoother than the original, but it gets close and is higher fidelity. It's quite interesting how effective conversion between different FM synths can be, despite having different parameter ranges. I tried converting DX100 presets to YM2151, and they ended up a little muted. They seem to sound better in Dexed, after conversion, which is surprising since I thought DX100 has more in common with YM2151 than DX7.
 
-<h2>OPNplug</h2>
+<h2>Hexter</h2>
 
-<p>TODO
+<p>TODO: Hexter is another free DX7 emulation, which reads DX7 sysex. It's made for Linux, but there is a CuteVST version worth comparing.
 
 <hr>
 
@@ -74,6 +78,10 @@ a{color:#705136;}
 <div id=x><audio controls><source src=music/fmtests_breeze-juceopl3.opus></audio> <span>Passing Breeze - JuceOPLVSTi</span></div>
 
 <p>This actually highlights some interesting aspects of how algorithms work. All but the bass in the original use algorithm 5 (the bass uses algorithm 3). Algorithm 5 is really just two layers of 2-op FM, the same that exists in OPL3. That is, they're basically two 2-op instruments played together, but have only one feedback loop etc. The <b>Bell sound</b> combines a bell with a muted brassy sound underneath it. We can model the pure bell-like sound, but lose the brassy part. The <b>Lead sound</b> is quite close in particular, due to containing a very quiet woodwind sound at a lower octave. Loss of the second layer in the lead is almost unnoticable since it's so underpowered in the original. The chords and bell suffer a bit, since they aren't as "rich" as the original. And as for the bass, we can't get too close because there is more than one modulator being used in algorithm 3. But it still sounds good for an OPL3 rendition.
+    
+<h2>ADLplug</h2>
+
+<p>TODO: ADLplug emulates the OPL3. It also supports 4-op instruments, which might be be interesting to try. It is related to OPNplug.
 
 <h2>VST2413</h2>
 
@@ -104,9 +112,6 @@ mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it ov
 
 <p>This is pretty much the best I could get out of it, but it doesn't sound very good or compare to the YM2151.
 
-<!-- <h2>JewelSynth</h2>
-<p>This is a 2-op synth, made by same creator of Vivaldi. It's mostly GUI-oriented, but I thought I'd explore its sound. Removed due to no modulation envelopes. -->
-
 <h2>FM-Four</h2>
 
 <p>FM-Four implements 4-op FM, but lacks some important features. It has no operator feedback (self-modulation), and contains only one modulation envelope, assignable to a single target at a time. The modulation envelope is also not a traditional ADSR, but an eight-step freeform envelope with no specified sustain/hold or release. It's just a definable curve for attack/decay. To make up for its flaws, it has 8 selectable waveforms, similar to ones you would find in OPL3/MA3. It uses Yamaha's 8 standard algorithms, however without feedback, algorithms 3 and 4 are basically identical. It also has a multi-mode filter, an LFO with a selectable target, a chorus effect and an EQ. These are extended features not found in Yamaha-like FM.
@@ -115,18 +120,19 @@ mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it ov
 
 <p>Aside from having very clicky NoteOn/NoteOff, which can be fixed by adding a bit of attack on the Amp ADSR, it can sound relatively good, in its own way. However, I encountered an issue when rendering to WAV in FL Studio which resulted in glitchy renders. I had to enable "Use fixed size buffers" in the plugin processing panel to get around the issue.
 
+<hr>
 
 <h2>Ganymed</h2>
 <p>A 4-op synth. Big brother to Vivaldi. I think it also cheats by having two layers, but we will only be using one layer.
 
-
-<hr>
-
-<h2>FMMF</h2>
-<p>This one seemed a bit odd, so I want to do this one here.
-
 <h2>Panzertank PM4</h2>
 <p>Another oddity to get out of the way.
+    
+<h2>O'Malley Sound Aphid DX</h2>
+<p>Somewhat similar to Uno FM, but possibly worse. Might suck.
+
+ <h2>Gijsdemik MoBells</h2>
+ <p>Another 3-op, supposedly good for bells, but worth seeing if it can do more.
 
 <h2>GTG FM4</h2>
 <p>A 3-op synth. Seemed ok at first glance but we'll have a look.
@@ -139,22 +145,40 @@ mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it ov
 
 <h2>Tramp MA (Model-A)</h2>
 <p>Another one, 3-op.
-
+    
+<h2>Tramp MA (Model-A)</h2>
+<p>Another one, 3-op.
+    
+<h2>ConcreteFX Feed</h2>
+<p>3-op FM, sounds crude and presets suck, but possibly checks all the boxes.
+    
 <hr>
 
+<h2>Sasatako SFM4</h2>
+<p>4-op, might be okay. 
+    
 <h2>eFemme</h2>
 <p>This one seemed good. I want to do this one a bit further in, after I get a bit experience from the others, to truly evaluate it.
 
+<h2>OctaSine</h2>
+<p>Very buggy and awkward, but mathematically solid.
+    
 <h2>Purple</h2>
 <p>A 4-op synth with many buttons and possibly some bugs. It has 3 versions as well, so leaving it to the end here.
 
-<hr>
+<h2>Sonicbits Exakt Lite</h2>
+<p>Could possibly be the best free 4-op FM synth, considering it has multiple waveforms.
 
 <h2>discoDSP Phantom</h2>
-<p>This is a commercial 4-op FM synth. Also want to have a look at this one
+<p>This is a commercial 4-op FM synth. Also want to have a look at this one  
+    
+<hr>
 
-<h2>VX7</h2>
-<p>An unreleased beta/demo, has some missing features. However, it's 6-op and is supposed to model the Yamaha SY-77. Algorithms don't seem interchangable. And the FM engine seems a bit weak.. But I want to do this one here before moving up into the freeform 6-ops.
+<h2>miniSoftMusik FEM2</h2>
+<p>The original FEM was unusable because it was out of tune. This one seems fixed. 6-op, unlocked matrix.
+
+<h2>Xen-FMTS 2</h2>
+<p>I originally rejected this because most patches are using alien tuning systems, but it seems easy enough to use normal tuning, so worth considering.
 
 <h2>Six / Double Six</h2>
 <p>Another one I want to get out of the way here. It's 6-op but uses 32 DX7 algorithms. Would like to determine the differences between Six Full and the various Double Six's, to see which is the definitive version.
@@ -173,7 +197,7 @@ mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it ov
 
 <hr>
 
-<p>So that's pretty much it for simple or free FM synths. FM7 is really cutting it close, but it may still qualify. It would be interesting to see how a lot of the 6-op synths stack up to the <b>AFM</b> sounds from Yamaha SY-77 (but not the AWM2 part). Yamaha also released an 8-op FS1R, which also ended up as the basis for the FM-X engine in Montage (which also uses AWM2). I also left out "Xen-FMTS", because it uses weird intonation systems and stuff.
+<p>So that's pretty much it for simple or free FM synths. FM7 is really cutting it close, but it may still qualify. It would be interesting to see how a lot of the 6-op synths stack up to the <b>AFM</b> sounds from Yamaha SY-77 (but not the AWM2 part). Yamaha also released an 8-op FS1R, which also ended up as the basis for the FM-X engine in Montage (which also uses AWM2).
 
  <p>There are more synths which utilize FM, but they go beyond what is typical of classic Yamaha FM (and sometimes combine different synthesis), but should be mentioned here as well.
 
@@ -189,8 +213,21 @@ mda DX10 is a 2-op FM synth with a peculiar flavor of FM. I would consider it ov
     <li>u-he Bazille (4-op, FM/Phase distortion/Fractual Resonance? + full modular cables + more)
     <li>Cypher (3-op, FM/waveshaper and some stuff.)
     <li>Rob Papen Blue II (6-op, FM/Subtractive/Phase distortion/Waveshaping/additive?)
-    <li>RedLion (8-op, $80! rather simple, only 12 algorithms but has wave knobs..)
-    <li>Portafm (2-op) - extremely polished OPLL emulator, worth looking into?
+    <li>chipsynth PortaFM (2-op) - extremely polished OPLL/OPL2 emulator, worth looking into?
+    <li>chipsynth MD (4-op) - extremely accurate YM2612/YM2608 emulation.
+    <li>chipsynth OPS7 (6-op) - extremely accurate DX7 emulation.
 </ol>
 
+    <h2>Hall of Shame</h2>
+    
+    <p>These plugins I have rejected, for being too broken to even consider:
+<ol>
+    <li>FMMF - 4-op, but completely broken, sounds nothing like FM. hate this one.
+    <li>miniSoftMusik FEM - also broken, completely out of tune. FEM2 appears to fix the issue.
+    <li>Xen-FMTS 2 - often atonal, but possibly remedied by changing tuning file.
+    <li>Speedsoft VX7 - people keep spreading this around, but its a demo that hardly functions, unusable.
+    <li>JewelSynth - An FM synth... that has no modulation envelopes. To be fair it was only made to test a GUI.
+    <li>Odo A-Sine V3 - Seems to do FM with multiple oscillators, but no modulation envelopes.
+</ol>
+    
 </div>
