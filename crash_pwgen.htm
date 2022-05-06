@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<style>
+	body{font-family:Segoe UI,Trebuchet MS,Tahoma,sans-serif;width:640px;margin:auto;text-align:center;}
+label.cell{display:inline-block;width:64px;background:#EEE;margin-bottom:4px;}
+label.cell:hover{background:#CCC;cursor:pointer}
+	span#levelname{display:inline-block;width:125px;white-space: nowrap;}
+svg{height:40px;width:40px;border-radius:64px;background:linear-gradient(#666,#111);margin:1}
+svg[q]{display:none}
+	</style>
+        <title>C</title>
+        <script type="text/javascript">
+var stringified = ["<svg id=s1><use href=#1></svg>", "<svg id=s2><use href=#2></svg>", "<svg id=s3><use href=#3></svg>", "<svg id=s0><use href=#0></svg>"];  // circle // square // cross / triangle
+function stringify(code) {
+    var s = '';
+    for (var i = 0; i < code.length; i++) {
+        if (i == 8 || i == 16)
+            s += "\n"
+        s += stringified[code[i]];
+    }
+    return s;
+}
+
+function mixAndPermute(v) {
+  var r;
+  r = (v * v) % 0x7e5;
+  r = (r * r) % 0x7e5;
+  r = (v * r) % 0x7e5;
+
+  return r;
+}
+
+var inverseMixAndPermute = new Array(0x7e5);
+for (var i = 0; i < inverseMixAndPermute.length; i++)
+    inverseMixAndPermute[i] = [];
+
+for (var i = 0; i < 0x7ff; i++)
+    inverseMixAndPermute[mixAndPermute(i)].push(i);
+
+function check(code)
+{
+    var v_13 = 0, v_14 = 0;
+
+    // Build bitmap into v_13 and v_14.
+    for (var i = 0; i < 24; i++) {
+        if (i < 13)
+            v_13 |= code[i] << (2 * i);
+        else
+            v_14 |= code[i] << (2 * (i - 13));
+    }
+
+    // For a super password, the first two are always triangles. Discard them.
+    v_13 >>= 4;
+    v_13 &= 0x3fffff;
+    v_14 &= 0x3fffff;
+
+    var g_05 = v_13 & 0x7ff;
+    var g_06 = (v_13 >> 11) & 0x7ff;
+    var g_07 = v_14 & 0x7ff;
+    var g_08 = (v_14 >> 11) & 0x7ff;
+
+    var g_09 = g_05 ^ g_07 ^ g_08;
+    var g_0a = g_05 ^ g_06 ^ g_08;
+    var g_0b = g_05 ^ g_06 ^ g_07;
+    var g_0c = g_06 ^ g_07 ^ g_08;
+
+    g_09 ^= 0x18d;
+    g_0a ^= 0x24e;
+    g_0b ^= 0x3e4;
+    g_0c ^= 0x139;
+
+    g_05 = mixAndPermute(g_09);
+    g_06 = mixAndPermute(g_0a);
+    g_07 = mixAndPermute(g_0b);
+    g_08 = mixAndPermute(g_0c);
+
+    var valid = g_05 <= 0x1ff &&
+                g_06 <= 0x1ff &&
+                g_07 <= 0x1ff &&
+                g_08 <= 0x3f;
+
+    return valid ? [g_05, g_06, g_07, g_08] : false;
+}
+
+function make(g_05, g_06, g_07, g_08) {
+    var results = [];
+
+    var g_09 = inverseMixAndPermute[g_05][0];
+    var g_0a = inverseMixAndPermute[g_06][0];
+    var g_0b = inverseMixAndPermute[g_07][0];
+    var g_0c = inverseMixAndPermute[g_08][0];
+
+    g_09 ^= 0x18d;
+    g_0a ^= 0x24e;
+    g_0b ^= 0x3e4;
+    g_0c ^= 0x139;
+
+    g_05 = g_09 ^ g_0a ^ g_0b;
+    g_06 = g_0a ^ g_0b ^ g_0c;
+    g_07 = g_09 ^ g_0b ^ g_0c;
+    g_08 = g_0a ^ g_09 ^ g_0c;
+
+    var v_13 = g_05 | (g_06 << 11);
+    var v_14 = g_07 | (g_08 << 11);
+
+    v_13 <<= 4;
+    v_13 |= 0xf;
+
+    var result = [];
+    for (var i = 0; i < 24; i++) {
+        if (i < 13)
+            result[i] = (v_13 >> (2 * i)) & 0x3;
+        else
+            result[i] = (v_14 >> (2 * (i - 13))) & 0x3;
+    }
+
+    return result;
+}
+		</script>
+        <script type="text/javascript">
+
+var levelDataENG = [
+{ name: "N. Sanity Beach",  gem: "clear", passgemid:  0 },
+{ name: "Jungle Rollers",   gem: "clear", passgemid:  1 },
+{ name: "The Great Gate",   gem: "clear", passgemid:  2 },
+{ name: "Boulders",         gem: "clear", passgemid:  3 },
+{ name: "Upstream",         gem: "clear", passgemid:  4 },
+{ name: "Papu Papu",        gem: "none",  passgemid: -1 },
+{ name: "Rolling Stones",   gem: "clear", passgemid:  5 },
+{ name: "Hog Wild",         gem: "clear", passgemid:  6 },
+{ name: "Native Fortress",  gem: "clear", passgemid:  7 },
+{ name: "Up the Creek",     gem: "clear", passgemid:  8 },
+{ name: "Ripper Roo",       gem: "none",  passgemid: -1 },
+{ name: "The Lost City",    gem: "green", passgemid:  9 },
+{ name: "Temple Ruins",     gem: "clear", passgemid: 10 },
+{ name: "Road to Nowhere",  gem: "clear", passgemid: 18 },
+{ name: "Boulder Dash",     gem: "clear", passgemid: 11 },
+{ name: "Sunset Vista",     gem: "clear", passgemid: 12 },
+{ name: "Koala Kong",       gem: "none",  passgemid: -1 },
+{ name: "Heavy Machinery",  gem: "clear", passgemid: 15 },
+{ name: "Cortex Power",     gem: "clear", passgemid: 14 },
+{ name: "Generator Room",   gem: "orange",passgemid: 16 },
+{ name: "Toxic Waste",      gem: "blue",  passgemid: 17 },
+{ name: "Pinstripe",        gem: "none",  passgemid: -1 },
+{ name: "The High Road",    gem: "clear", passgemid: 19 },
+{ name: "Slippery Climb",   gem: "red",   passgemid: 21 },
+{ name: "Lights Out",       gem: "purple",passgemid: 20 },
+{ name: "Jaws of Darkness", gem: "clear", passgemid: 13 },
+{ name: "Castle Machinery", gem: "clear", passgemid: 23 },
+{ name: "Nitrus Brio",      gem: "none",  passgemid: -1 },
+{ name: "The Lab",          gem: "yellow",passgemid: 22 },
+{ name: "The Great Hall",   gem: "none",  passgemid: -1 },
+{ name: "Dr. Neo Cortex",   gem: "none",  passgemid: -1 },
+
+{ name: "Fumbling in the Dark",gem: "clear", passgemid: 24 },
+{ name: "Whole Hog",        gem: "clear", passgemid: 25 }
+]
+
+
+
+            function selectGems(selected) {
+                var inputs = document.querySelectorAll('#gems input');
+                for (var i = 0; i < inputs.length; i++)
+                    inputs[i].checked = selected;
+					
+				generate();
+            }
+            function generate() {
+                console.log(arguments);
+                var level = parseInt(document.getElementById('level').value);  // 1 to 31
+				
+                if (isNaN(level) || level < 1 || level > 31) {
+                    alert('Level must be between 1 and 31');
+                    return;
+                }
+				
+				document.querySelector("span#levelname").innerHTML = level + ": "+levelDataENG[level-1].name;
+				
+				
+				
+                var g_05 = level;
+                var g_06 = 0;
+                var g_07 = 0;
+                var g_08 = 0;
+                for (var i = 0; i < 2; i++) {
+                    if (!document.getElementById('key-' + i).checked)
+                        continue;
+                    g_05 |= 1 << (i + 5);
+                }
+                for (var i = 0; i < 26; i++) {
+                    if (!document.getElementById('gem-' + i).checked)
+                        continue;
+                    if (i < 2)
+                        g_05 |= 1 << (i + 7);
+                    else if (i < 11)
+                        g_06 |= 1 << (i - 2);
+                    else if (i < 20)
+                        g_07 |= 1 << (i - 11);
+                    else
+                        g_08 |= 1 << (i - 20);
+                }
+                var s = stringify(make(g_05, g_06, g_07, g_08));
+                document.getElementById('result').innerHTML = s;
+
+                return false;
+            }
+			
+			window.onload = generate;
+        </script>
+    </head>
+    <body>
+	
+<svg q>
+<symbol id=0 viewBox="0 0 20 20"><path fill=#3BB d="M10 5.9l2 3.3 1.9 3.4H6.2l2-3.4L10 6m0-3.5l-3.4 6-3.5 6H17l-3.5-6-3.5-6z">
+<symbol id=1 viewBox="0 0 20 20"><path fill=#C33 d="M10 5.2a4.8 4.8 0 1 1 0 9.6 4.8 4.8 0 0 1 0-9.6m0-2a6.7 6.7 0 1 0 0 13.5 6.7 6.7 0 0 0 0-13.4z">
+<symbol id=2 viewBox="0 0 20 20"><path fill=#C69 d="M14.1 5.9V14H6V6H14m2-2H4V16h12V4z">
+<symbol id=3 viewBox="0 0 20 20"><path fill=#89E d="M16.1 5.6L14.5 4l-4.4 4.5L5.6 4 4 5.6l4.5 4.5L4 14.5l1.6 1.6 4.5-4.4 4.4 4.4 1.6-1.6-4.4-4.4z">
+</svg>
+<form oninput="generate()">
+	Level: 
+	
+	<input type="range" id="level" min="1" max="31" value="1">
+	<span id="levelname"></span>
+    <div id="gems">
+    <label class="cell">Key 0: <input type="checkbox" id="key-0"></label>
+    <label class="cell">Key 1: <input type="checkbox" id="key-1"></label>
+    <label class="cell">Gem 0: <input type="checkbox" id="gem-0"></label>
+	<label class="cell">Gem 1: <input type="checkbox" id="gem-1"></label>
+	<label class="cell">Gem 2: <input type="checkbox" id="gem-2"></label>
+	<label class="cell">Gem 3: <input type="checkbox" id="gem-3"></label>
+	<label class="cell">Gem 4: <input type="checkbox" id="gem-4"></label><br>
+	<label class="cell">Gem 5: <input type="checkbox" id="gem-5"></label>
+	<label class="cell">Gem 6: <input type="checkbox" id="gem-6"></label>
+	<label class="cell">Gem 7: <input type="checkbox" id="gem-7"></label>
+	<label class="cell">Gem 8: <input type="checkbox" id="gem-8"></label>
+	<label class="cell">Gem 9: <input type="checkbox" id="gem-9"></label>
+	<label class="cell">Gem 10: <input type="checkbox" id="gem-10"></label>
+	<label class="cell">Gem 11: <input type="checkbox" id="gem-11"></label><br>
+	<label class="cell">Gem 12: <input type="checkbox" id="gem-12"></label>
+	<label class="cell">Gem 13: <input type="checkbox" id="gem-13"></label>
+	<label class="cell">Gem 14: <input type="checkbox" id="gem-14"></label>
+	<label class="cell">Gem 15: <input type="checkbox" id="gem-15"></label>
+	<label class="cell">Gem 16: <input type="checkbox" id="gem-16"></label>
+	<label class="cell">Gem 17: <input type="checkbox" id="gem-17"></label>
+	<label class="cell">Gem 18: <input type="checkbox" id="gem-18"></label><br>
+	<label class="cell">Gem 19: <input type="checkbox" id="gem-19"></label>
+	<label class="cell">Gem 20: <input type="checkbox" id="gem-20"></label>
+	<label class="cell">Gem 21: <input type="checkbox" id="gem-21"></label>
+	<label class="cell">Gem 22: <input type="checkbox" id="gem-22"></label>
+	<label class="cell">Gem 23: <input type="checkbox" id="gem-23"></label>
+	<label class="cell">Gem 24: <input type="checkbox" id="gem-24"></label>
+	<label class="cell">Gem 25: <input type="checkbox" id="gem-25"></label>
+	</div>
+</form>
+        <button onclick="selectGems(true)">Select all</button>
+        <button onclick="selectGems(false)">Select none</button>
+        <pre id="result"></pre>
+    </body>
+</html>
