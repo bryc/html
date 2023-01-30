@@ -208,7 +208,8 @@ function doIT(nums) {
     ctrl.appendChild(elem(["h3","Sub Tanks & Upgrades"]));
     for(var i = 0 ; i < 1; i++) {
         for(var j = 0; j < 8; j++) {
-            var chk = elem(["input",{whatevs:`0,${2**j}`,onchange:saveBits,checked:(mem[0]&2**j?"checked":""),type:"checkbox"}]);
+            var chk = elem(["span"]);
+            chk.appendChild(elem(["input",{whatevs:`0,${2**j}`,onchange:saveBits,checked:(mem[0]&2**j?"checked":""),type:"checkbox"}]));
             chk.dataset['tooltip'] = labels[`0,${2**j}`];
             ctrl.appendChild(chk);
         }
@@ -216,7 +217,8 @@ function doIT(nums) {
     ctrl.appendChild(elem(["h3","Heart Tanks"]));
     for(var i = 0 ; i < 1; i++) {
         for(var j = 0; j < 8; j++) {
-            var chk = elem(["input",{whatevs:`1,${2**j}`,onchange:saveBits,checked:(mem[1]&2**j?"checked":""),type:"checkbox"}]);
+            var chk = elem(["span"]);
+            chk.appendChild(elem(["input",{whatevs:`1,${2**j}`,onchange:saveBits,checked:(mem[1]&2**j?"checked":""),type:"checkbox"}]));
             chk.dataset['tooltip'] = labels[`1,${2**j}`];
             ctrl.appendChild(chk);
         }
@@ -224,14 +226,16 @@ function doIT(nums) {
     ctrl.appendChild(elem(["h3","Weapons Acquired"]));
     for(var i = 0 ; i < 1; i++) {
         for(var j = 0; j < 8; j++) {
-            var chk = elem(["input",{whatevs:`2,${2**j}`,onchange:saveBits,checked:(mem[2]&2**j?"checked":""),type:"checkbox"}]);
+            var chk = elem(["span"]);
+            chk.appendChild(elem(["input",{whatevs:`2,${2**j}`,onchange:saveBits,checked:(mem[2]&2**j?"checked":""),type:"checkbox"}]));
             chk.dataset['tooltip'] = labels[`2,${2**j}`];
             ctrl.appendChild(chk);
         }
     }
     ctrl.appendChild(elem(["h3","Hadouken/Intro flag/Parity bits"]));
 
-    var el = elem(["input",{whatevs:`3,${2**0}`,onchange:saveBits,checked:(mem[3]&2**0?"checked":""),type:"checkbox"}]);
+    var el = elem(["span"]);
+    el.appendChild(elem(["input",{whatevs:`3,${2**0}`,onchange:saveBits,checked:(mem[3]&2**0?"checked":""),type:"checkbox"}]));
     el.dataset['tooltip'] = labels[`3,${2**0}`];
     ctrl.appendChild(el);
 
@@ -241,7 +245,8 @@ function doIT(nums) {
     ctrl.appendChild(elem(["input",{disabled:true,whatevs:`3,${2**3}`,onchange:saveBits,checked:(mem[3]&2**3?"checked":""),type:"checkbox"}]));
     ctrl.appendChild(elem(["span",{innerHTML:" - "}]));
 
-    var el = elem(["input",{whatevs:`3,${2**4}`,onchange:saveBits,checked:(mem[3]&2**4?"checked":""),type:"checkbox"}]);
+    var el = elem(["span"]);
+    el.appendChild(elem(["input",{whatevs:`3,${2**4}`,onchange:saveBits,checked:(mem[3]&2**4?"checked":""),type:"checkbox"}]));
     el.dataset['tooltip'] = labels[`3,${2**4}`];
     ctrl.appendChild(el);
 
