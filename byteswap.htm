@@ -54,7 +54,7 @@ window.ondrop=function(e) {
 		reader.onload = function(e) {
 			var t = new Uint8Array(e.target.result);
 			
-			if(document.querySelector('input.stype').checked) { wordswap(t); }
+			if(document.querySelector('input.stype').checked) { wordswap(t, files[0].name); }
 			else { byteswap(t, files[0].name); }
 			
 		};
