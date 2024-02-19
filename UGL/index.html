@@ -1,0 +1,345 @@
+<script>
+var gdata = {};
+
+
+
+
+gdata.xxx = {
+    A1: [ // Good
+    ],
+    A2: [
+    ],
+    A3: [
+    ],
+    B1: [ // Decent
+    ],
+    B2: [
+    ],
+    B3: [
+    ],
+    C1: [ // Acceptable
+    ],
+    C2: [
+    ],
+    C3: [
+    ],
+    D: [ // Dubious or Skeptical
+    ],
+    E: [ // Bad
+    ],
+    F: [ // Terrible
+    ],
+    X: [ // Skip (typically sports games that are too similar to other games)
+    ],
+};
+</script>
+<script src=n64.js></script>
+<script src=sms.js></script>
+<script src=nes.js></script>
+<script src=gb.js></script>
+<script src=md.js></script>
+<script src=pce.js></script>
+<script src=snes.js></script>
+<script src=ps1.js></script>
+<script src=sat.js></script>
+<script src=dc.js></script>
+<script src=gba.js></script>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+    body{margin:auto;font-family:IBM Plex Sans;font-size:16px;
+	overflow-x:hidden;
+	background:#191919;color:#EEE; margin-bottom:128px;}
+h1{
+    margin:0;
+    padding:4px;
+	color:#fff;
+    text-align:center;
+	cursor:pointer;
+	background:#282828;
+	opacity:0.5;
+    border-bottom:3px solid #6663;
+    margin-bottom:8px;
+	overflow:hidden;
+}
+
+nav:hover{background:#222;cursor:pointer}
+nav:hover > h1{opacity:1;color:#FFF}
+nav.sel h1 {
+opacity:1;
+cursor:default;
+color:#FFF;
+background:#333;
+}
+h2{
+    margin:0;
+    padding:7px;
+	text-align:center;
+	background:#222;
+    border-bottom:2px solid #333;
+	font-size:16px;
+}
+
+h3{
+    margin:0;
+    margin-top:2px;
+    padding:3px;
+    background:#303134;
+    color:#EEE;
+    border-bottom:3px solid #666;
+    text-align:center;
+    opacity:0.8;
+}
+
+.container{
+  display:flex;
+  justify-content: center;
+}
+
+fuc{display:flex;  flex-direction: column;
+}
+section{
+display:flex;
+flex:1;
+
+
+ 
+
+}
+
+nav{
+
+width:112px;
+background:#202020;
+transition: all 0.1s ease-out;
+padding-bottom:10px;
+}
+nav.sel{
+cursor:default;
+width:236px;
+background:#252525;
+box-shadow: 0 0 60px #0008;
+z-index:2;
+}
+
+nav div{
+opacity:0.7;
+  background: linear-gradient(to right, #fff 45%, #222);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+nav div.top, nav.sel div.top{
+font-weight:bold;
+  background: linear-gradient(to right, gold 60%, #27282b);
+  color:gold;
+-webkit-background-clip: text;
+}
+
+nav div.gg, nav.sel div.gg{
+  background: linear-gradient(to right, cyan 60%, #27282b);
+  color:cyan;
+-webkit-background-clip: text;
+}
+
+
+
+
+nav.sel div{
+opacity:1;
+  background: linear-gradient(to right, #eee 60%, #27282b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+fuc {margin-right:9px;}
+
+[box] div{
+text-indent:10px;
+
+
+	white-space: nowrap;
+}
+nav.sel:hover{z-index:3}
+nav.sel div:hover{
+cursor:default;
+overflow:visible;
+  background: #353535;
+  -webkit-background-clip: revert;
+  -webkit-text-fill-color: revert;
+
+display:inline-block;
+min-width:100%;
+
+ 
+  outline:4px solid #353535cc;
+
+}
+}
+
+[box] div:nth-child(even){zbackground:#8881}
+
+[box]:nth-child(even) {
+    zbackground:#242529;
+}
+
+#hide{
+display:none}
+
+
+
+div.menu {width:84px;text-align:right;user-select:none}
+
+div.menu a {color:#FFF; display:block; padding:7px 9px}
+div.menu a:hover{background:#222}
+#toggleExtra:hover {background:#333;cursor:pointer}
+div.menu a#sel {font-weight:bold;background:#333}
+
+</style>
+
+
+<section class="container" id=show>
+<fuc>
+<h2>🥇Good</h2>
+<section box>
+<nav id=A1 class=sel><h1 id=hdr>A1</h1></nav>
+<nav id=A2><h1 id=hdr>A2</h1></nav>
+<nav id=A3><h1 id=hdr>A3</h1></nav>
+</section>
+</fuc>
+<fuc>
+<h2>🥈Decent</h2>
+<section box>
+<nav id=B1><h1 id=hdr>B1</h1></nav>
+<nav id=B2><h1 id=hdr>B2</h1></nav>
+<nav id=B3><h1 id=hdr>B3</h1></nav>
+</section>
+</fuc>
+<fuc>
+<h2>🥉Tolerable</h2>
+<section box>
+<nav id=C1><h1 id=hdr>C1</h1></nav>
+<nav id=C2><h1 id=hdr>C2</h1></nav>
+<nav id=C3><h1 id=hdr>C3</h1></nav>
+</section>
+</fuc>
+</section>
+
+<section class="container" id=hide>
+<fuc>
+<h2>⛔Rejects</h2>
+<section box>
+<nav id=D class=sel><h1 id=hdr>Dubious</h1></nav>
+<nav id=E><h1 id=hdr>Bad</h1></nav>
+<nav id=F><h1 id=hdr>Awful</h1></nav>
+<nav id=X><h1 id=hdr>Skip</h1></nav>
+</section>
+</fuc>
+</section>
+
+
+<div class=menu style="position:fixed;top:0;left:0">
+<h2 title="Switch to/from Rejects" id=toggleExtra>😊</h2>
+<a href=#n64>N64</a>
+<a href=#sms>SMS/GG</a>
+</div>
+
+
+
+<script>
+window.addEventListener(
+  "hashchange",
+  () => {
+    doTheThing();
+  },
+  false,
+);
+
+if(location.hash) {
+    doTheThing();
+}
+
+
+function doTheThing() {
+    var linx = document.querySelectorAll('div.menu a');
+    for(var i = 0; i < linx.length; i++) {
+        linx[i].id = (linx[i].attributes.href.value===location.hash) ? "sel" : "";
+    }
+
+    var listz = document.querySelectorAll('fuc nav');
+    for(var i = 0; i < listz.length; i++) {
+        var ourID = listz[i].id;
+       
+  //while (listz[i].firstChild) {listz[i].removeChild(listz[i].lastChild);  }
+        
+    while(listz[i].childNodes.length > 1) { listz[i].removeChild(listz[i].lastChild); }
+        
+        for(var j = 0; j < gdata[location.hash.slice(1)][ourID].length; j++) {
+            var el = document.createElement('div');
+            el.innerText = gdata[location.hash.slice(1)][ourID][j];
+            if(gdata[location.hash.slice(1)][ourID][j].charAt(0)==="⭐") el.className="top", el.innerText = el.innerText.slice(1);
+            if(gdata[location.hash.slice(1)][ourID][j].charAt(0)==="✋") el.className="gg", el.innerText = el.innerText.slice(1);
+            // ✋
+            
+            listz[i].appendChild(el);
+        }
+    }
+
+
+
+
+
+
+
+	var good, total = 0;
+
+    var z = document.querySelectorAll("fuc h2");
+
+	var z0 = z[0].parentNode.querySelectorAll('div').length;
+	var z1 = z[1].parentNode.querySelectorAll('div').length;
+	var z2 = z[2].parentNode.querySelectorAll('div').length;
+	var z3 = z[3].parentNode.querySelectorAll('div').length;
+    z[0].innerHTML =`🥇Good (${z0})`, total += z0;
+    z[1].innerHTML =`🥈Decent (${z1})`, total += z1;
+    z[2].innerHTML =`🥉Tolerable (${z2})`, total += z2;
+	good = total;
+    z[3].innerHTML =`⛔Rejects (${z3})`, total += z3;
+
+	document.title = `UML: ${location.hash.slice(1).toUpperCase()} - ${good} / ${total} (${((good/total)*100).toFixed(2)}%)`;
+
+	var hdrz = document.querySelectorAll("#hdr");
+	for(var i = 0; i < hdrz.length; i++) {
+	hdrz[i].parentNode.onclick = dome;
+	}
+	
+	function dome() {
+	if(this.className !== "sel") {
+        if(document.querySelector(".sel"))
+        this.closest('section.container').querySelector(".sel").className = "";
+        this.className = "sel";
+		
+	} else {
+    }
+	
+	}
+
+	document.querySelector("#toggleExtra").onclick = function() {
+    this.clickd = true;
+    this.innerHTML = this.innerText==="😊" ? "☠️" : "😊";
+    
+	var fac = document.querySelectorAll("section.container");
+	for(var i = 0; i < fac.length; i++)	{
+        if(fac[i].id === "show") fac[i].id = "hide";
+        else{fac[i].id = "show";}
+	}
+	}
+}
+
+
+
+</script>
