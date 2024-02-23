@@ -1,0 +1,233 @@
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    width:900px;
+    margin:auto;
+    margin-bottom:256px;
+    font-size: 20px;
+    color:#222;
+    background:#DFE6FF;
+}
+
+a:link { color:#33F }
+a:visited { color:#73F }
+a:hover {filter: brightness(0.5);}
+
+p {text-align:justify; text-justify: auto; margin:15px 0;line-height:1.2}
+
+section {background:#FFF;border-radius:32px;padding:5px 28px;margin:54px 0px;}
+
+h1{font-size:36px;border-bottom:1px solid #EEE}
+h1,h2,h3 {margin:12px 0}
+
+h1 span {float:right;font-size:16px;font-weight:normal;color:#CCC}
+
+
+hr{border-style: solid;color:#EEE}
+
+
+
+pre {
+font-size:19px;
+
+font-family: Consolas;
+background-color:#EEE;color:#3B4045; /* background-color:#3B4045;color:#C7E6EA; */
+
+border-radius:7px;
+padding:12px 18px;
+}
+
+code{font-family:Consolas;background:#F5F5F5}
+blockquote{border-left:6px solid #EEE;padding-left:11px;margin-left:18px;color:#777}
+</style>
+
+<section>
+<h1>Hashing Demystified<span>github.com/bryc</h1>
+<!-- With a relatively simple test suite at our disposal, we'll  -->
+<p>In this article we will deconstruct hashing at a conceptual level, exploring theoretical hash functions at various stages of development, identifying what works and what doesn't. The code will be in JavaScript, though special attention is made to ensure the syntax is generally C-like.
+
+<h2>But first... What is hashing?</h2>
+
+<p>In the plainest of words, the goal of a <i>hash function</i> is to provide a way to represent any given input as a short, deterministic code—known as the <i>hash</i>. A hash can be compared to that of a fingerprint, but in the form of a <i>number</i> of fixed size. The size of the hash dictates the total amount of possible hashes, and because hashes are finite, it will <i>always</i> be possible for two completely different inputs to produce the same hash. This is mathematically assured by the <a href="https://en.wikipedia.org/wiki/Pigeonhole_principle">Pigeonhole principle</a>. And so, ideally, a hash function will attempt to achieve a lower probability of this occurring.
+
+<h2>Why is hashing imporant?</h2>
+
+<p>
+Hashing is a key component in many fields. 
+
+<ul>
+<li>It's the backbone of <i>hash tables</i> or <i>hash maps</i>—which are a type of associative array. It allows for looking up a desired value efficiently, rather than having to check every value in the array from top to bottom. You essentially get a direct link to what you're looking for.
+<li>Cryptographic hashes are used for many data security applications, such as password hashing, digital signatures.
+<li>Verifying file integrity.
+<li>File or data identifier.
+<li>As part of other algorithms, such as pseudorandom number generators.
+<li>Converting entropy such as timestamps, into seeds.
+</ul>
+
+
+
+
+
+</section>
+
+<section>
+<h1>Properties of hash functons</h1>
+
+<h2>Uniformity / Collision resistance</h2>
+
+<p>When two different inputs produce the same hash, we call it a <i>collision</i> (bad thing). Under normal circumstances, this cannot be avoided—only mitigated. Each additional bit of data used in the hash calculation will exponentially decrease the probability of collision (good thing). And so the reliability of hashes increases. A 128-bit hash is better than a 64-bit hash is better than a 32-bit hash, and so on.
+
+<p>We can actually model the probabilities of a collision as a solution to the <a href="https://en.wikipedia.org/wiki/Birthday_problem">Birthday problem</a>, the name of which comes from the fact that only 23 people need to be in a room for a 50% chance that two people have the same birthday. Which is the same as a collision.
+
+<p>But essentially, if one generates <i>1,000 perfectly-random hashes per second, non-stop</i>, it will take 1 minute for 32-bit hashes to reach a 50% probability of a collision occurring. It will then take 1 month for 64-bit hashes to reach 50%, and 687 million years for a 128-bit hash. The gold standard in cryptography is 256-bit, which would take 13 octillion years to reach a 50% probability.
+
+<p>In other words:
+<ul>
+    <li>A 50% chance of collision is reached after <b>77,163</b> produced 32-bit hashes.
+    <li>That number then becomes <b>5,056,937,541</b> for 64-bit hashes.
+    <li>And then <b>21,719,381,355,163,562,492</b> for 128-bit hashes (21.7 quintillion).
+</ul>
+
+<p>And so, if you can afford more bits per hash—use them. You probably want to avoid 32-bit hashes if you require more than 1000 unique hashes in a system that cannot handle a single collision. But there are certain scenarios where collision avoidance only matters when comparing a small selection of objects (sometimes just two objects at a time), rather than needing to ensure that millions of objects will have no collision. In which case, 32-bit is fine. In fact, in some cases collisions can be resolved without dire consequences, such as with hash tables that use chaining.
+
+<h2>Checksums and random number generators</h2>
+
+<p>Data corruption has always been a potential problem and is precisely the reason it's always a good idea to keep backups of important data. As such, we have ways of detecting errors in data, such as using checksums. A checksum is a short block of data which is usually stored alongside the data it was calculated from. Upon re-examining the data, the checksum is re-calculated and compared to the stored checksum. If this comparison fails, we know some data corruption has occurred.
+
+<p>Checksums are technically a form of hash with less stringent requirements, due to the fact that it only needs to do a single check on whether the stored hash is equal to the re-calculated hash. Technically in this situation, we actually <i>are</i> looking for a collision; because <i>we must verify that the stored hash is correct</i>, and even a miniscule 8-bit checksum's 1 in 256 chance of a collision, is often reasonable enough assurance that the data is valid. This is because there are 255 hash values that will result in an error, but only one that is a direct match.
+
+<p>Checksums don't need to be algorithmically complex either, as some of the most common errors, such as a flipped bit, can be detected with absolute assurance using a simple sum of each input byte. In fact, hashes which are strongly arithmetic and non-random tend to perform better as checksums, because error-detection rates are more predictable. There are certain specialized checksum algorithms—better described as error-detection algorithms which have even better detection guarantees, such as the famous CRC algorithm. In fact, CRC-32 has often been used as a hash function itself, despite the fact that mathematically speaking, it's an error-detection code. General hash functions typically do not provide any real detection guarantee, and instead rely on probabilities based on the number of bits in the hash result, though in some cases a simple bit flip may be provable to never cause undetectable errors.
+
+<p><b>Pseudo-random number generators</b> also have significant overlap with hash functions. In fact, hash functions and PRNGs can often utilize the same class of <i>mixing functions</i> (aka <i>pseudo-random function</i>) to achieve effective scrambling of the results. For example, MurmurHash3's mixing function has found popular use as a class of PRNG.
+
+<p>Both PRNGs and hashes can exist in varying <i>state sizes</i>, as well as be potentially cryptographically secure (or not). Though there are also considerations that may differ, such as PRNGs needing to maximize its <i>period</i> length; that is, the total amount of subsequent random numbers before the sequence inevitably must repeat. And while collision resistance is important in hash functions, it's not necessarily considered a property of PRNGs.
+
+<p>In any case, the specific details aren't that important, but I think it's valuable to understand that hashing techniques can often translate to other use cases.
+
+<hr>
+
+<p>With all that out of the way, let's begin our hash journey.
+
+</section>
+
+
+
+
+
+
+<section>
+
+<h1>A terrible hash function</h1>
+
+<pre>
+function hash(key, h = 0) {
+    for(let i = 0; i < key.length; i++) {
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+<p>This is nothing but the sum of all input bytes—a checksum. It might do the job of detecting bit errors in a network packet, but it causes endless collisions as a hash function. Still, it represents a starting point, and even has some trivia.
+
+<p>This exact algorithm was listed as a hash function in the first edition of <i>The C Programming Language</i>, by Brian Kernighan and Dennis Ritchie in 1978. To their credit, they did state <i>"This is not the best possible algorithm, but it has
+the merit of extreme simplicity".</i>
+
+<h3>Achieving position-dependence</h3>
+
+<pre>
+function hash(key, h = 0) {
+    for(let i = 0; i < key.length; i++) {
+        h <<= 1;
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+<p>Still a bad hash, but this simple change represents a step forward: <i>Position-dependence</i>. With the simple summation before, <code>[1,2,3]</code> and <code>[3,2,1]</code> would map to the same output, but with an added <i>shift-left</i> operation, the order of the input bytes now change the result. This operation is equivalent to multiplying by two.
+
+<p>On old 8-bit CPUs like the MOS 6502, you can only shift one bit per instruction, so we're holding to that limitation here in tribute. In the 6502 assembly world, the most efficient checksum would be to instead use a <i>rotate-left</i> operation with a <i>add-with-carry</i> operation. Though JS (and C for that matter) lacks a native equivalent, so we make do.
+</section>
+
+<section>
+
+<h1>A bare-minimum hash function</h1>
+
+<pre>
+function hash(key, h = 1) {
+    for(let i = 0; i < key.length; i++) {
+        h += h << 1;
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+<p>Another very subtle change. We now initialize the hash to <code>1</code> instead of <code>0</code>. This allows us to still build up entropy even if the input bytes are zero. We also now multiply by 3 instead of 2 (that's what <code>h = (h << 1) + h</code> is doing; multiplying <code>h</code> by 2 and then adding <code>h</code> is equivalent to <code>h *= 3</code>). 
+
+<p>This gives us noticably fewer collisions, but it's stll a very poor result.
+
+<h3>The over-used, ill-advised hash</h3>
+
+<pre>
+function hash(key, h = 0) {
+    for(let i = 0; i < key.length; i++) {
+        h += h << 5;
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+<p>So, before we move on, we have to talk about something. In 1981, James Gosling put this hash function in his version of Emacs (aka Gosling Emacs). Aside from the zero initialization, it's actually promising! What it's doing here is equivalent to multiplying by 33.
+
+<p>In 1988 the Second Edition of <i>The C Programming Language</i> was published. That old hash function had now been replaced with this:
+
+<pre>
+function hash(key, h = 0) {
+    for(let i = 0; i < key.length; i++) {
+        h = (h << 5) - h;
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+<p>It's basically the same as Gosling's hash, but worse. The only difference is that it multiplies <code>h</code> by 31 instead of 33. According to the lore, not even Dennis Richie authors knew the origin of this function. Ultimately it must have been Gosling Emacs, but the change to 31 is still a mystery to me.
+
+<p>In 1996, the 31 variant was used in Java for <code>String.hashCode()</code>. And unfortunately it has spread like wildfire in modern times due to StackOverflow. Apparently it was <a href="https://bugs.openjdk.org/browse/JDK-4045622">found</a> superior to 33 in his test, though I am skeptical.
+
+<p>We're still not done though, as yet another famous hash function is nearly identical to these—the djb2 hash from 1990:
+
+<pre>
+function hash(key, h = 5381) {
+    for(let i = 0; i < key.length; i++) {
+        h += h << 5;
+        h += key[i];
+    }
+    return h;
+}
+</pre>
+
+Aside from the starting value of <code>5381</code>, it's identcal to Gosling's 1981 hash. This was posted on Usenet in 1990, amongst some discussons between Chris Torek & Dan Bernstein. Essentially they were just playing around with the Gosling hash and Bernstein found that starting with <i>5381</i> improved his results. Here's a couple of choice quotes:
+
+<blockquote>Dec 4, 1990 - Bernstein: These days I  start from h = 5381, and set h = h << 5 + h + c mod any power of 2 for each new character c. Apparently Chris Torek prefers a multiplier of 31:  h << 5 - h + c. These are reliable and extremely fast.</blockquote>
+
+<blockquote>June 24, 1991 - Bernstein: Again, practically any good multiplier works. I think you're worrying about the fact that 31c + d doesn't cover any reasonable range of hash values if c and d are between 0 and 255. That's why, when I discovered the 33 hash function and started using it in my compressors, I started with a hash value of 5381. I think you'll find that this does just as well as a 261 multiplier.</blockquote>
+
+<blockquote>June 26, 1991 - Bernstein: The profiling statistics I've saved from various compressors form a much more realistic sample. They show 33 as slightly better than random hashing on typical files, 37 as slightly worse. I've never tried 261 or 31, but I'll bet 261 does worse than 33 on text files.</blockquote>
+
+<p>Moving on, shall we?
+
+</section>
+
+
+<section>
+To be continued.
+</section>
+
+
+
+
+
