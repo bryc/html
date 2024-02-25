@@ -1,54 +1,87 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@300..700&family=Overpass:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <style>
-body {
-    font-family: 'Segoe UI', sans-serif;
-    width:900px;
-    margin:auto;
-    margin-bottom:256px;
-    font-size: 20px;
-    color:#222;
-    background:#DFE6FF;
+pre, code {
+    font-family: 'Overpass Mono', Consolas, monospace;
+    font-weight: 500;
+    text-shadow: #fff 0 1px 0;
 }
-
-a:link { color:#33F }
-a:visited { color:#73F }
-a:hover {filter: brightness(0.5);}
-
-p {text-align:justify; text-justify: auto; margin:15px 0;line-height:1.2}
-
-section {background:#FFF;border-radius:32px;padding:5px 28px;margin:54px 0px;}
-
-h1{font-size:36px;border-bottom:1px solid #EEE}
-h1,h2,h3 {margin:12px 0}
-
-h1 span {float:right;font-size:16px;font-weight:normal;color:#CCC}
-
-
-hr{border-style: solid;color:#EEE}
-
-
-
 pre {
-font-size:19px;
-
-font-family: Consolas;
-background-color:#EEE;color:#3B4045; /* background-color:#3B4045;color:#C7E6EA; */
-
-border-radius:7px;
-padding:12px 18px;
+    color: #14313b;
+    background: #eff3f9;
+    padding: 12px 20px;
+    border-radius: 7px;
 }
+code {
+    color: #004f6a;
+    background: #eff3f9;
+    font-weight: 600;
+    display: inline-block;
+    height: 23px;
+    line-height: 1.2;
+    padding: 0 4px;
+    margin: 0 1px;
+    outline: 1px solid #eff3f9;
+    border-radius: 2px;
+}
+body {
+    color: #222;
+    background: #d2e5ff;
+    font: 22px 'Overpass', Segoe UI, sans-serif;
+    width: 1000px;
+    margin: auto;
+    margin-bottom: 256px;
+}
+section {
+    background: #fff;
+    padding: 5px 28px;
+    margin: 54px 0;
+    border-radius: 14px;
+}
+p {
+    text-align: justify;
+    margin: 12px 0;
+    line-height: 1.2;
+}
+h1, h2, h3 {
+    font-weight: 900;
+    letter-spacing: -1.4px;
+    margin: 12px 0;
+}
+h1 {
+    font-size: 40px;
+    border-bottom: 1px solid #e4eaf4;
+}
+h1 span {
+    float:right;
+    color: #ccc;
+    font-size: 18px;
+    font-weight: normal;
+    letter-spacing: 1;
+}
+blockquote {
+    color: #777;
+    border-left: 7px solid #eee;
+    padding-left: 11px;
+    margin-left: 18px;
+}
+a:link    { color:#33f }
+a:visited { color:#73f }
+a:hover   { filter: brightness(0.5) }
 
-code{font-family:Consolas;background:#F5F5F5}
-blockquote{border-left:6px solid #EEE;padding-left:11px;margin-left:18px;color:#777}
+hr{ border: 1px solid #e4eaf4 }
+
 </style>
 
 <section>
-<h1>Hashing Demystified<span>github.com/bryc</h1>
-<!-- With a relatively simple test suite at our disposal, we'll  -->
-<p>In this article we will deconstruct hashing at a conceptual level, exploring theoretical hash functions at various stages of development, identifying what works and what doesn't. The code will be in JavaScript, though special attention is made to ensure the syntax is generally C-like.
+<h1>Hashing Demystified<span>github.com/bryc</span></h1>
+<!-- With a relatively simple test suite at our disposal -->
+<p>In this article we will deconstruct hashing at a conceptual level, exploring theoretical hash functions at various stages of development, identifying what works and what doesn't. The hope is that this may serve as a solid foundation. The code will be in JavaScript, though special attention is made to ensure the syntax is generally C-like.
 
 <h2>But first... What is hashing?</h2>
 
-<p>In the plainest of words, the goal of a <i>hash function</i> is to provide a way to represent any given input as a short, deterministic code—known as the <i>hash</i>. A hash can be compared to that of a fingerprint, but in the form of a <i>number</i> of fixed size. The size of the hash dictates the total amount of possible hashes, and because hashes are finite, it will <i>always</i> be possible for two completely different inputs to produce the same hash. This is mathematically assured by the <a href="https://en.wikipedia.org/wiki/Pigeonhole_principle">Pigeonhole principle</a>. And so, ideally, a hash function will attempt to achieve a lower probability of this occurring.
+<p>In the plainest of words, the goal of a <i>hash function</i> is to provide a summary representation of any given input (called a <i>key</i>) as a short, deterministic code—known as the <i>hash</i>. A hash can be compared to that of a fingerprint, but in the form of a <i>number</i> of fixed size. The size of the hash dictates the total amount of possible hashes, and because hashes are finite, it will <i>always</i> be possible for two completely different inputs to produce the same hash. This is mathematically assured by the <a target=_blank href="https://en.wikipedia.org/wiki/Pigeonhole_principle">Pigeonhole principle</a>. And so, ideally, a hash function will attempt to achieve a lower probability of this occurring.
 
 <h2>Why is hashing imporant?</h2>
 
@@ -56,18 +89,23 @@ blockquote{border-left:6px solid #EEE;padding-left:11px;margin-left:18px;color:#
 Hashing is a key component in many fields. 
 
 <ul>
-<li>It's the backbone of <i>hash tables</i> or <i>hash maps</i>—which are a type of associative array. It allows for looking up a desired value efficiently, rather than having to check every value in the array from top to bottom. You essentially get a direct link to what you're looking for.
-<li>Cryptographic hashes are used for many data security applications, such as password hashing, digital signatures.
-<li>Verifying file integrity.
-<li>File or data identifier.
-<li>As part of other algorithms, such as pseudorandom number generators.
-<li>Converting entropy such as timestamps, into seeds.
+  <li>It's the backbone of <i>hash tables</i> or <i>hash maps</i>—which are a type of associative array. It allows for looking up a desired value efficiently, rather than having to check every value in the array from top to bottom. You essentially get a direct link to what you're looking for.
+  <li>Cryptographic hashes are used for many data security applications, such as password hashing, digital signatures.
+  <li>Verifying file integrity.
+  <li>File or data identifier.
+  <li>As part of other algorithms, such as pseudorandom number generators.
+  <li>Converting entropy such as timestamps, into seeds.
 </ul>
 
+<h2>Why even read this, is FNV or xxHash bad or something?</h2>
 
+<p>I feel like <i>non-cryptographic</i> hashing is a field where you don't necessarily want to blindly trust claims without testing. It's not like MD5/SHA where a lot of testing has already been done. A lot of code gets spread around on places like StackOverflow; and a lot of it can be bad and still get upvoted. I've seen dreadful random number generators that use <code>Math.PI</code> and <code>Math.sin</code> get praised, and also really poor hash functions lifted from Java and Google Analytics. Just because a hash function works in one case doesn't mean it will work for you; often you end up using it sub-optimally without understanding how or why.
 
+<p>I also see a lot of misinformation spread around, people claiming they know why certain <i>magic numbers</i> were chosen, or why these magic numbers work, but the truth is, they don't.
 
+<p>So I just think being able to test these functions and understand what the operations are doing is important, to actually know what you're doing, so to speak. Even if you don't need to design your own hash, there is value in having a concrete understanding if you are using hash functions in your code.
 
+<p><i>To answer the question: No, FNV isn't bad per se—it's at least better than Java's hashCode, but it's still sub-optimal. xxHash in partcular improves on it in basically every way. But FNV as a quick one-liner is fine in low-stakes situations (or if limited by hardware). You should still take the time to test and compare it to other solutions, though.</i>
 </section>
 
 <section>
@@ -77,15 +115,15 @@ Hashing is a key component in many fields.
 
 <p>When two different inputs produce the same hash, we call it a <i>collision</i> (bad thing). Under normal circumstances, this cannot be avoided—only mitigated. Each additional bit of data used in the hash calculation will exponentially decrease the probability of collision (good thing). And so the reliability of hashes increases. A 128-bit hash is better than a 64-bit hash is better than a 32-bit hash, and so on.
 
-<p>We can actually model the probabilities of a collision as a solution to the <a href="https://en.wikipedia.org/wiki/Birthday_problem">Birthday problem</a>, the name of which comes from the fact that only 23 people need to be in a room for a 50% chance that two people have the same birthday. Which is the same as a collision.
+<p>We can actually model the probabilities of a collision as a solution to the <a target=_blank href="https://en.wikipedia.org/wiki/Birthday_problem">Birthday problem</a>, the name of which comes from the fact that only 23 people need to be in a room for a 50% chance that two people have the same birthday. Which is the same as a collision.
 
 <p>But essentially, if one generates <i>1,000 perfectly-random hashes per second, non-stop</i>, it will take 1 minute for 32-bit hashes to reach a 50% probability of a collision occurring. It will then take 1 month for 64-bit hashes to reach 50%, and 687 million years for a 128-bit hash. The gold standard in cryptography is 256-bit, which would take 13 octillion years to reach a 50% probability.
 
 <p>In other words:
 <ul>
-    <li>A 50% chance of collision is reached after <b>77,163</b> produced 32-bit hashes.
-    <li>That number then becomes <b>5,056,937,541</b> for 64-bit hashes.
-    <li>And then <b>21,719,381,355,163,562,492</b> for 128-bit hashes (21.7 quintillion).
+  <li>A 50% chance of collision is reached after <b>77,163</b> produced 32-bit hashes.
+  <li>That number then becomes <b>5,056,937,541</b> for 64-bit hashes.
+  <li>And then <b>21,719,381,355,163,562,492</b> for 128-bit hashes (21.7 quintillion).
 </ul>
 
 <p>And so, if you can afford more bits per hash—use them. You probably want to avoid 32-bit hashes if you require more than 1000 unique hashes in a system that cannot handle a single collision. But there are certain scenarios where collision avoidance only matters when comparing a small selection of objects (sometimes just two objects at a time), rather than needing to ensure that millions of objects will have no collision. In which case, 32-bit is fine. In fact, in some cases collisions can be resolved without dire consequences, such as with hash tables that use chaining.
@@ -107,106 +145,106 @@ Hashing is a key component in many fields.
 <hr>
 
 <p>With all that out of the way, let's begin our hash journey.
-
 </section>
 
-
-
-
-
-
 <section>
-
 <h1>A terrible hash function</h1>
 
 <pre>
-function hash(key, h = 0) {
+function Hash(key) {
+    let hash = 0;
     for(let i = 0; i < key.length; i++) {
-        h += key[i];
+        hash += key[i];
     }
-    return h;
+    return hash;
 }
 </pre>
 
-<p>This is nothing but the sum of all input bytes—a checksum. It might do the job of detecting bit errors in a network packet, but it causes endless collisions as a hash function. Still, it represents a starting point, and even has some trivia.
+<p>This is nothing but the sum of all input bytes—known as a <i>checksum</i>. It might do the job of detecting bit errors in a network packet, but has a 99% collision rate as a hash function, which is objectively unusable. Still, it represents a starting point, and even comes with computer trivia:
 
-<p>This exact algorithm was listed as a hash function in the first edition of <i>The C Programming Language</i>, by Brian Kernighan and Dennis Ritchie in 1978. To their credit, they did state <i>"This is not the best possible algorithm, but it has
+<p>This exact "algorithm" was listed as a hash function in the first edition of <i>The C Programming Language</i>, by Brian Kernighan and Dennis Ritchie in 1978. To their credit, they did state <i>"This is not the best possible algorithm, but it has
 the merit of extreme simplicity".</i>
 
-<h3>Achieving position-dependence</h3>
+<h3>Achieving position dependence</h3>
 
 <pre>
-function hash(key, h = 0) {
+function Hash(key) {
+    let hash = 0;
     for(let i = 0; i < key.length; i++) {
-        h <<= 1;
-        h += key[i];
+        hash = hash << 1;
+        hash += key[i];
     }
-    return h;
+    return hash;
 }
 </pre>
 
-<p>Still a bad hash, but this simple change represents a step forward: <i>Position-dependence</i>. With the simple summation before, <code>[1,2,3]</code> and <code>[3,2,1]</code> would map to the same output, but with an added <i>shift-left</i> operation, the order of the input bytes now change the result. This operation is equivalent to multiplying by two.
+<p>This is still terrible, but this single change represents a step forward: <i>Position dependence</i>. With the simple summation used previously, <code>[1,2,3]</code> and <code>[3,2,1]</code> would map to the same output (<b>3+2+1</b> is the same as <b>1+2+3</b>), but with an added <i>shift-left</i> operation, the order of the input bytes now change the result. This <i>shift-left</i> operation is equivalent to multiplying by two.
 
-<p>On old 8-bit CPUs like the MOS 6502, you can only shift one bit per instruction, so we're holding to that limitation here in tribute. In the 6502 assembly world, the most efficient checksum would be to instead use a <i>rotate-left</i> operation with a <i>add-with-carry</i> operation. Though JS (and C for that matter) lacks a native equivalent, so we make do.
+<p>Some historical trivia for you: On microcontrollers and old 8-bit CPUs like the MOS 6502, you can only shift one bit per instruction, so we're holding to that limitation here in tribute. It was the Intel 8086 that introduced variable shift amounts in a single instruction. In the 6502 assembly world, the most efficient checksum would be to instead use a <i>rotate-left</i> instruction with an <i>add-with-carry</i> instruction. Though JS (and almost all languages for that matter) lacks native support for these. 
 </section>
 
 <section>
-
 <h1>A bare-minimum hash function</h1>
 
 <pre>
-function hash(key, h = 1) {
+function Hash(key) {
+    let hash = 1;
     for(let i = 0; i < key.length; i++) {
-        h += h << 1;
-        h += key[i];
+        hash += key[i];
+        hash += hash << 1;
     }
-    return h;
+    return hash;
 }
 </pre>
 
-<p>Another very subtle change. We now initialize the hash to <code>1</code> instead of <code>0</code>. This allows us to still build up entropy even if the input bytes are zero. We also now multiply by 3 instead of 2 (that's what <code>h = (h << 1) + h</code> is doing; multiplying <code>h</code> by 2 and then adding <code>h</code> is equivalent to <code>h *= 3</code>). 
+<p>Starting with some very subtle changes, we now initialize the hash to <code>1</code> instead of <code>0</code>. This prevents the hash function from doing nothing if the input begins with null bytes. We also swapped the order of operations, and now incorporate the input first. In this case, changing the order won't have a significant effect, but it is generally more effective to incorporate the input <i>as early as possible</i>, so any subsequent mixing operations can maximize their effect. This is also precisely why <a target=_blank href="https://datatracker.ietf.org/doc/html/draft-eastlake-fnv-17.html#section-2">FNV1 was revised to FNV1a</a>; they found that it improved the uniformity of the hash distribution (or avalanche effect). Though we'll get to that later.
 
-<p>This gives us noticably fewer collisions, but it's stll a very poor result.
+<p>The final, most significant change is that we now multiply by 3 instead of 2 (that's what <code>hash += hash << 1</code> is doing; multiplying <code>hash</code> by 2 and then adding to <code>hash</code> is equivalent to <code>hash *= 3</code>). This gives us noticably fewer collisions, but it's still a very poor result.
+</section>
 
-<h3>The over-used, ill-advised hash</h3>
+<section>
+<h1>The over-used, ill-advised hash</h1>
 
 <pre>
-function hash(key, h = 0) {
+function Hash(key) {
+    let hash = 0;
     for(let i = 0; i < key.length; i++) {
-        h += h << 5;
-        h += key[i];
+        hash += hash << 5;
+        hash += key[i];
     }
-    return h;
+    return hash;
 }
 </pre>
 
-<p>So, before we move on, we have to talk about something. In 1981, James Gosling put this hash function in his version of Emacs (aka Gosling Emacs). Aside from the zero initialization, it's actually promising! What it's doing here is equivalent to multiplying by 33.
+<p>So, before we move on, this is the perfect time to talk about this popular hash function that still gets spread around. In 1981, James Gosling put this hash function in his version of Emacs (aka Gosling Emacs). In terms of collisions, <i>it's not bad</i>, but still concerningly high when tested against alternatives. What it's doing here is equivalent to multiplying by 33.
 
-<p>In 1988 the Second Edition of <i>The C Programming Language</i> was published. That old hash function had now been replaced with this:
+<p>More trivia: In 1988 the Second Edition of <i>The C Programming Language</i> was published. That old junk hash function from the previous edition was quietly replaced replaced with this:
 
 <pre>
-function hash(key, h = 0) {
+function Hash(key) {
+    let hash = 0;
     for(let i = 0; i < key.length; i++) {
-        h = (h << 5) - h;
-        h += key[i];
+        hash = (hash << 5) - hash;
+        hash += key[i];
     }
-    return h;
+    return hash;
 }
 </pre>
 
-<p>It's basically the same as Gosling's hash, but worse. The only difference is that it multiplies <code>h</code> by 31 instead of 33. According to the lore, not even Dennis Richie authors knew the origin of this function. Ultimately it must have been Gosling Emacs, but the change to 31 is still a mystery to me.
+<p>It's basically the same as Gosling's hash, but slightly worse. The only difference is that it now multiplies <code>hash</code> by 31 instead of 33 (by doing <code>(hash << 5) - hash</code> instead of <code>(hash << 5) + hash</code>). According to the lore, not even Dennis Richie knew the origin of this particular function when asked.
 
-<p>In 1996, the 31 variant was used in Java for <code>String.hashCode()</code>. And unfortunately it has spread like wildfire in modern times due to StackOverflow. Apparently it was <a href="https://bugs.openjdk.org/browse/JDK-4045622">found</a> superior to 33 in his test, though I am skeptical.
+<p>In 1996, this variant was added to the Java programming language for <code>String.hashCode()</code>. And unfortunately ports of this function have spread like wildfire in modern times due to StackOverflow, despite countless advancements made since then. Apparently the Java developer ran some of his own tests and <a target=_blank href="https://bugs.openjdk.org/browse/JDK-4045622">found 31 superior</a> to 33 in his test, though I am skeptical, as my tests shows it slightly worse or equivalent to 33.
 
 <p>We're still not done though, as yet another famous hash function is nearly identical to these—the djb2 hash from 1990:
 
 <pre>
-function hash(key, h = 5381) {
+function Hash(key) {
+    let hash = 5381;
     for(let i = 0; i < key.length; i++) {
-        h += h << 5;
-        h += key[i];
+        hash += hash << 5;
+        hash += key[i];
     }
-    return h;
+    return hash;
 }
 </pre>
 
@@ -218,16 +256,54 @@ Aside from the starting value of <code>5381</code>, it's identcal to Gosling's 1
 
 <blockquote>June 26, 1991 - Bernstein: The profiling statistics I've saved from various compressors form a much more realistic sample. They show 33 as slightly better than random hashing on typical files, 37 as slightly worse. I've never tried 261 or 31, but I'll bet 261 does worse than 33 on text files.</blockquote>
 
-<p>Moving on, shall we?
+<p>In any case, I've yet to find a measurable result where the starting value of <code>5381</code> has any meaningful improvement over say, <code>9</code>. There is one last variant of note before we move on.
 
+<pre>
+function Hash(key) {
+    let hash = 5381;
+    for(let i = 0; i < key.length; i++) {
+        hash += hash << 5;
+        hash ^= key[i];
+    }
+    return hash;
+}
+</pre>
+
+<p>This is Bernstein's "cdb" hash from 1996, also known as djb2a. Its singular difference is that it uses XOR instead of ADD for the input. This change does seem to result in measurably fewer collisions, though not enough to make it a "good" hash function. This benefit seems to be directly tied to the usage of the 33 multiplier.
 </section>
-
 
 <section>
-To be continued.
+<h1>The best single-shift hash</h1>
+
+<pre>
+function Hash(key) {
+    let hash = 1;
+    for(let i = 0; i < key.length; i++) {
+        hash += key[i];
+        hash += hash << 7;
+    }
+    return hash;
+}
+</pre>
+
+<p>And so, combining everything we've learned so far, gets us here. We're now multiplying by 129 instead of 33. <code>7</code> seems to be the optimal shift value that results in the lowest collision rate so far. However it's still not competitive.
+
+<p>To be continued.
 </section>
 
 
 
 
-
+<style>
+pre b {color: #7B3C00} 
+pre x {color: #468100} 
+pre z {color: #1880F7}
+</style>
+<script>
+document.querySelectorAll('pre').forEach(function(el) {
+    // ghetto syntax highlighting
+    el.innerHTML = el.innerHTML.replaceAll(/(function|for|let|return)/g, "<b>$1</b>");
+    el.innerHTML = el.innerHTML.replaceAll(/(hash|key)/g, "<x>$1</x>");
+    el.innerHTML = el.innerHTML.replaceAll(/(\d+)/g, "<z>$1</z>");
+});
+</script>
