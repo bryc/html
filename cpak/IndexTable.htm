@@ -242,6 +242,12 @@ overflow: hidden;;border-radius:5px;
 </p>
 
 <p>
+    Normally, the only way to fix this is to check the backup.
+    If the backup differs, we can check to see if any of the differences can 
+    repair the issue, and assuming the backup isn't corrupt, it likely will be fixed.
+</p>
+
+<p>
     Through manual inspection, if our NoteTable says there should be only 2 
     startIndexes, but there's actually 3, we know there's a problem.
     The total number of 1s also should equal the number of chains in the table, and we see only 2 here.
@@ -250,5 +256,35 @@ overflow: hidden;;border-radius:5px;
 
 <p>
     If we look <i>even closer</i>, we may see the problem: The first 9 should be a 7. That would fix it.
-    But as far as I'm yet aware, there isn't a cheap, rock-solid algorithmic way to detect and correct this error in all possible ways.
+    But as far as I'm yet aware, there isn't a cheap, rock-solid algorithmic way to detect and correct 
+    this error in all possible ways, without resorting to the backup.
+</p>
+
+<h2>Repairing without resorting to the backup</h2>
+
+<p>
+A backup is nice, but backups can be corrupt, too.
+Blindly attempting to load a backup can be problematic.
+With libultra, if the Primary table's checksum changes just one single bit, it 
+will immediately attempt to use the backup.
+
+But here's the issue. What if we erased the backup entirely?
+Well, then absolutely nothing can be recovered!
+
+...And yet, if we just repaired that single bit in the checksum, we could recover <i>everything</i>.
+</p>
+
+<p>
+    I 100% believe it is important to <i>parse</i> the IndexTable.
+    The checksums can honestly be ignored; they're not as reliable as the hard data itself.
+    Our goal is to be resilient as possible, at any cost. 
+    If something bad happens, we want the user to have every chance at recovering their data.
+    The alternative is unsatisfactory: if something bad happens, go scorched earth. Erase everything, don't attempt to repair it, because it's already tainted. It's for their own good.
+</p>
+
+<p>
+    But unfortunately the way linked lists work here are quite loose.
+    The logic involved can be quite abstract, and complex.
+    There may be imperfections, caveats.
+    It's difficult to find a solution covering everything that is both elegant and efficient.
 </p>
