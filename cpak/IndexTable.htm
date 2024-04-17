@@ -1,0 +1,210 @@
+<title>IndexTable (Controller Pak)</title>
+<style>
+    html{width:800px;margin:auto}
+    body{font:18px Trebuchet MS;background:#222;color:#EEE;}
+    [q]{color:orange}
+    [w]{color:lightblue}
+    z{
+        text-align:right;
+        padding:0 4px;
+        color:#333;
+        font-family:Consolas, monospace;
+
+        background:#FFF;}
+
+
+    z[id]::before { content: attr(id);text-transform: capitalize;}
+    z[id="03"] {color: #1451d3;}
+    z[id="00"] {color: #AAA;}
+    z:not([id="03"]):nth-child(n + 6) {font-weight:bold;color:#000;background:#BBB}
+
+    div#zq{
+        display: grid;
+grid-template-columns: repeat(8, 1fr);
+grid-template-rows: repeat(16, 1fr);
+grid-column-gap: 0px;
+grid-row-gap: 0px;
+gap: 1px;
+background:#DDD;
+width:400px;
+line-height:1;
+margin:auto;
+padding:5px;
+overflow: hidden;;border-radius:5px;
+    }
+</style>
+
+<h1>The IndexTable</h1>
+
+<p>
+    The <b q>IndexTable</b> is a 256-byte data structure that addresses 
+    where and <i w>in what order</i> a file's data segments should be read (aka "pages").
+
+    The IndexTable is divided into 128 <b q>IndexNodes</b>, and each node is a direct
+    representation of of the <i w>entire memory contents</i>, in this case 32768 bytes.
+
+    So for example, the 6th node represents the allocation state of one specific 256-byte data
+    segment starting at address 0x500. This points to the earliest available segment in which user save data can be stored.
+    The initial 5 segments before this are reserved for the filesystem itself.
+    This is how we end up with a total capacity of "123 pages".
+<br><br>
+    The <i>value</i> of an <b q>IndexNodes</b> tells us one of 3 things:
+    <ol>
+        <li>If 3: Next available segment (i.e. unused; available for use)</li>
+        <li>If 1: Final segment of the <b q>IndexChain</b></li>
+        <li>A value 5-127: The next segment of a chain</li>
+        <li>Any other value: Outside range (Invalid)</li>
+    </ol>
+ 
+    This basically means that each file allocation is represented using the <i q>Linked List</i> data structure (though I prefer just calling them <i>chains</i>). 
+    Note that the IndexTable itself does not explicitly define the <b q>start index</b> of the chain.
+    These values are stored in a separate data structure: the <b q>NoteTable</b>
+     ("notes" are essentially just N64 terminology for "files" in the filesystem).
+</p>
+
+<p> Here is how an empty IndexTable looks internally (values are in hex):</p>
+
+<div id="zq">
+<z id="71"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+<z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+</div>
+
+<p>
+    The first IndexUnit is a checksum of all subsequent bytes in the table.
+    It should be noted that these values are technically 16-bit wide, however,
+    the high byte is always going to be zero on official C-Paks, so I ignore
+    them here and only show the low byte.
+</p>
+
+<p>
+    Upon saving a game of say, <i>007: The World Is Not Enough</i>, it will look like this,
+    after having written 2 pages of data:
+</p>
+
+<div id="zq">
+    <z id="72"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="06"></z><z id="01"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    </div>
+
+    <p>
+        We can see that index 5 (counting from 0) contains <b>6</b>, specifying the <i q>next index</i> it should connect to. And index 6 contains <b>1</b>, indicating the <i q>last index</i>.
+        This means that the <i w>order in which to read the data</i> can be represented by the list of values [5, 6].
+
+        The NoteTable will then explicitly contain an entry for this game that specifies the <i q>start index</i>, in this case <b>5</b> would exist there
+        (along with other metadata such as the note name, game code, etc.).
+
+        <br><br>
+        And now we add a second save file, this time from <i>Rayman 2</i>:
+    </p>
+
+    <div id="zq">
+        <z id="70"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="06"></z><z id="01"></z><z id="01"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        </div>
+
+<p>Index 7 changed to a <b>1</b>, indicating that this is the last index in the sequence. And the NoteTable will define Rayman 2's startIndex as <b>7</b>.</b></p>
+
+
+    <p>We generally need to trust the NoteTable to tell us the startIndex. Consider the following IndexTable:</p>
+
+    <div id="zq">
+        <z id="74"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="06"></z><z id="01"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="05"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+        </div>
+
+<p>
+    The result of a stray node connecting to the startIndex causes the literal interpretation of the sequence to change to [81, 5, 6].
+    This is bad, because without context, it's not obvious that index 5 is the correct startIndex. And <i w>there's no way to be 100% sure if this is an error</i>.
+    
+
+    A heuristic such as <i w>checking if the nextIndex is less than the previous</i> could in theory help, but
+    it would not work in all cases, and technically, going in reverse or random order is "legally possible", but it actuality, this does not occur in typical use.
+    We may also use the checksum, but this requires the checksum itself to be correct, and this will just tell the code to use the backup, which could potentially ignore valid data in the primary.
+    <br><br>
+    This is why it's essential to have the startIndexes explicitly defined, in this case, in the NoteTable.
+</p>
+
+<h2>The Backup IndexTable</h2>
+
+<p>
+    
+    There is in fact a backup of the IndexTable, essentially intended to be a 1:1 copy of the primary IndexTable.
+    The Primary IndexTable is actually stored at index 1 (again, counting from 0), and the Backup is stored at index 2.
+    Though in the case of filesystem offset locations it's more appropriate to use their real addresses in memory: 0x100 and 0x200.
+</p>
+
+<p>
+    Put simply, whenever the IndexTable is modified, either deleting a file, or writing one, the result is then copied to the backup.
+    But if the <b q>Primary IndexTable checksum</b> ever fails, the backup will be restored, at least in libultra games.
+<br><br>
+    In fact, in libultra, even if the backup were to be empty, as long as the checksum is correct, it will be copied to the primary, even if the only invalid data in the primary was the checksum.
+    So this hypothetical scenerio would lead to <i>data loss</i> by trying to <i>avoid</i> data loss.
+</p>
+
+
+<h2>Parsing and Repairing an IndexTable</h2>
+
+<p>
+    If you've played the N64 enough, especially with a third party C-Pak, you've likely encountered a C-Pak error screen, telling you it's "damaged", and asks if you want to "attempt repair".
+    Almost every N64 game utilizes the same standard SDK library, known as libultra.
+    And somewhere in that library contains code for the C-Pak that can repair some problems
+    in the IndexTable. It does an OK for what it is, but it's not optimal. It's not as flexible as it <i>could</i> be.
+    But I don't blame them, the logic required to optimally retain as much valid data while repairing as much as possible, can end up quite complex.
+    Things will likely get quite technical after this point, so fair warning.
+</p>
