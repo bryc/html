@@ -166,7 +166,7 @@ overflow: hidden;;border-radius:5px;
         <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
         <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
         <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
-        </div>
+    </div>
 
 <p>
     The result of a stray node connecting to the startIndex causes the literal interpretation of the sequence to change to [81, 5, 6].
@@ -207,4 +207,48 @@ overflow: hidden;;border-radius:5px;
     in the IndexTable. It does an OK for what it is, but it's not optimal. It's not as flexible as it <i>could</i> be.
     But I don't blame them, the logic required to optimally retain as much valid data while repairing as much as possible, can end up quite complex.
     Things will likely get quite technical after this point, so fair warning.
+</p>
+
+<p>Consider the following IndexTable:</p>
+<div id="zq">
+    <z id="81"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="00"></z><z id="06"></z><z id="09"></z><z id="01"></z>
+    <z id="09"></z><z id="0A"></z><z id="01"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+    <z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z><z id="03"></z>
+</div>
+
+<p>
+    It breaks a cardinal rule of the IndexTable data structure.
+    That is, it contains a duplicate index.
+    But it's even worse, because it causes a conflict between two existing chains.
+
+    In this particular example, index 5 and index 8 are startIndexes.
+    But they both converge once they reach index 9.
+    And as a result, both chains have the same final two nodes, 9 and 10 (0xA in hex).
+
+    This also creates a ghost chain; a startIndex of 7 that doesn't exist in the NoteTable.
+</p>
+
+<p>
+    Through manual inspection, if our NoteTable says there should be only 2 
+    startIndexes, but there's actually 3, we know there's a problem.
+    The total number of 1s also should equal the number of chains in the table, and we see only 2 here.
+    Another indicator of a problem.
+</p>
+
+<p>
+    If we look <i>even closer</i>, we may see the problem: The first 9 should be a 7. That would fix it.
+    But as far as I'm yet aware, there isn't a cheap, rock-solid algorithmic way to detect and correct this error in all possible ways.
 </p>
