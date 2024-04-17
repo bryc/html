@@ -41,7 +41,7 @@ overflow: hidden;;border-radius:5px;
     where and <i w>in what order</i> a file's data segments should be read (aka "pages").
 
     The IndexTable is divided into 128 <b q>IndexNodes</b>, and each node is a direct
-    representation of of the <i w>entire memory contents</i>, in this case 32768 bytes.
+    representation of a segment of the <i w>entire memory contents</i>, in this case 32768 bytes.
 
     So for example, the 6th node represents the allocation state of one specific 256-byte data
     segment starting at address 0x500. This points to the earliest available segment in which user save data can be stored.
