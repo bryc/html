@@ -1,0 +1,1284 @@
+<nav>
+<div id=n0 class=current onclick=buildList(0)>S-YXG50</div>
+<div id=n1 onclick=buildList(1)>S-YXG2006LE</div>
+</nav>
+<list></list>
+<script>
+let data = {
+    "Grand Piano": [
+        {
+            "1": "GrndPnoK",
+            "18": "MelloGrP",
+            "40": "PianoStr",
+            "41": "Dream"
+        },
+        {
+            "1": " Grand Piano KSP",
+            "40": "Piano Strings",
+            "41": "Dream",
+            "112": "Live! Grand Piano"
+        }
+    ],
+    "Bright Piano": [
+        {
+            "1": "BritPnoK"
+        },
+        {
+            "1": "Bright Piano KSP"
+        }
+    ],
+    "Electric Grand Piano": [
+        {
+            "1": "ElGrPnoK",
+            "32": "Det.CP80",
+            "40": "ElGrPno1",
+            "41": "ElGrPno2"
+        },
+        {
+            "1": "Electric Grand Piano KSP",
+            "32": "Detuned CP80",
+            "112": "MIDI Grand Piano"
+        }
+    ],
+    "Honky-tonk Piano": [
+        {
+            "1": "HnkyTnkK"
+        },
+        {
+            "1": "Honky-tonk Piano KSP"
+        }
+    ],
+    "Electric Piano 1": [
+        {
+            "1": "El.Pno1K",
+            "18": "MelloEP1",
+            "32": "Chor.EP1",
+            "40": "HardEl.P",
+            "45": "VX El.P1",
+            "64": "60sEl.P"
+        },
+        {
+            "1": "Electric Piano 1 KSP",
+            "32": "Chorus Electric Piano 1",
+            "114": "Cool! Galaxy Electric Piano"
+        }
+    ],
+    "Electric Piano 2": [
+        {
+            "1": "El.Pno2K",
+            "32": "Chor.EP2",
+            "33": "DX Hard",
+            "34": "DXLegend",
+            "40": "DX Phase",
+            "41": "DX+Analg",
+            "42": "DXKotoEP",
+            "45": "VX El.P2"
+        },
+        {
+            "1": "Electric Piano 2 KSP",
+            "32": "Chorus Electric Piano 2",
+            "41": "DX + Analog Electric Piano",
+            "112": "DX Modern Electric Piano",
+            "113": "Hyper Tines"
+        }
+    ],
+    "Harpsichord": [
+        {
+            "1": "Harpsi.K",
+            "25": "Harpsi.2",
+            "35": "Harpsi.3"
+        },
+        {
+            "1": "Harpsichord KSP",
+            "25": "Harpsichord 2",
+            "35": "Harpsichord 3"
+        }
+    ],
+    "Clavi": [
+        {
+            "1": "Clavi. K",
+            "27": "ClaviWah",
+            "64": "PulseClv",
+            "65": "PierceCl"
+        },
+        {
+            "1": "Clavichord KSP"
+        }
+    ],
+    "Celesta": [
+        {},
+        {}
+    ],
+    "Glockenspiel": [
+        {},
+        {}
+    ],
+    "Music Box": [
+        {
+            "64": "Orgel"
+        },
+        {
+            "64": "Orgel"
+        }
+    ],
+    "Vibraphone": [
+        {
+            "1": "VibesK",
+            "45": "HardVibe"
+        },
+        {
+            "1": "Vibraphone KSP"
+        }
+    ],
+    "Marimba": [
+        {
+            "1": "MarimbaK",
+            "64": "SineMrmb",
+            "97": "Balafon2",
+            "98": "Log Drum"
+        },
+        {
+            "1": "Marimba KSP",
+            "64": "Sine Marimba",
+            "97": "Balimba",
+            "98": "Log Drums"
+        }
+    ],
+    "Xylophone": [
+        {},
+        {}
+    ],
+    "Tubular Bells": [
+        {
+            "96": "ChrchBel",
+            "97": "Carillon"
+        },
+        {
+            "96": "Church Bells",
+            "97": "Carillon"
+        }
+    ],
+    "Dulcimer": [
+        {
+            "35": "Dulcimr2",
+            "96": "Cimbalom",
+            "97": "Santur"
+        },
+        {
+            "35": "Dulcimer 2",
+            "96": "Cimbalom",
+            "97": "Santur"
+        }
+    ],
+    "Drawbar Organ": [
+        {
+            "32": "DetDrwOr",
+            "33": "60sDrOr1",
+            "34": "60sDrOr2",
+            "35": "70sDrOr1",
+            "36": "DrawOrg2",
+            "37": "60sDrOr3",
+            "38": "EvenBar",
+            "40": "16+2\"2/3",
+            "64": "Organ Ba",
+            "65": "70sDrOr2",
+            "66": "CheezOrg",
+            "67": "DrawOrg3"
+        },
+        {
+            "32": "Detuned Drawbar Organ",
+            "33": "60's Drawbar Organ 1",
+            "34": "60's Drawbar Organ 2",
+            "35": "70's Drawbar Organ 1",
+            "37": "60's Drawbar Organ 3",
+            "40": "16+2\"2/3",
+            "64": "Organ Bass",
+            "65": "70's Drawbar Organ 2",
+            "66": "Cheezy Organ",
+            "67": "Drawbar Organ 3",
+            "112": "Jazz Organ 1",
+            "116": "Bright Drawbar"
+        }
+    ],
+    "Percussive Organ": [
+        {
+            "24": "70sPcOr1",
+            "32": "DetPrcOr",
+            "33": "LiteOrg",
+            "37": "PercOrg2"
+        },
+        {
+            "24": "70's Percussive Organ 1",
+            "32": "Detuned Percussive Org",
+            "33": "Light Organ",
+            "37": "Percussive Organ 2"
+        }
+    ],
+    "Rock Organ": [
+        {
+            "64": "RotaryOr",
+            "65": "SloRotar",
+            "66": "FstRotar"
+        },
+        {
+            "64": "Rotary Organ",
+            "65": "Slow Rotary",
+            "66": "Fast Rotary",
+            "112": "Rock Organ",
+            "117": "Cool! Rotor Organ",
+            "118": "Cool! Organ",
+            "127": "Theater Organ"
+        }
+    ],
+    "Church Organ": [
+        {
+            "32": "ChurOrg3",
+            "35": "ChurOrg2",
+            "40": "NotreDam",
+            "64": "OrgFlute",
+            "65": "TrmOrgFl"
+        },
+        {
+            "32": "Church Organ 3",
+            "35": "Church Organ 2",
+            "40": "Notre Dame",
+            "64": "Organ Flute",
+            "65": "Tremolo Organ Flute",
+            "113": "Chapel Organ",
+            "120": "16'+4' Organ",
+            "121": "16'+2' Organ"
+        }
+    ],
+    "Reed Organ": [
+        {
+            "40": "Puff Org"
+        },
+        {
+            "40": "Puff Organ"
+        }
+    ],
+    "Accordion": [
+        {
+            "32": "AccordIt"
+        },
+        {
+            "112": "Musette Accordion",
+            "113": "Traditional Accordion"
+        }
+    ],
+    "Hamonica": [
+        {
+            "32": "Harmo 2"
+        },
+        {
+            "32": "Harmonica 2",
+            "112": "Sweet! Harmonica"
+        }
+    ],
+    "Tango Accordion": [
+        {
+            "64": "TngoAcd2"
+        },
+        {
+            "64": "Tango Accordion 2",
+            "113": "Bandoneon"
+        }
+    ],
+    "Nylon Guitar": [
+        {
+            "16": "NylonGt2",
+            "25": "NylonGt3",
+            "43": "VelGtHrm",
+            "96": "Ukulele"
+        },
+        {
+            "43": "Velo Guitar Harmonics",
+            "96": "Ukulele",
+            "112": "Classical Guitar"
+        }
+    ],
+    "Steel Guitar": [
+        {
+            "16": "SteelGt2",
+            "35": "12StrGtr",
+            "40": "Nyln&Stl",
+            "41": "Stl&Body",
+            "96": "Mandolin"
+        },
+        {
+            "35": "12-string Guitar",
+            "40": "Nylon & Steel Guitar",
+            "41": "SteelGtr with BodySound",
+            "96": "Mandolin"
+        }
+    ],
+    "Jazz Guitar": [
+        {
+            "18": "MelloGtr",
+            "32": "JazzAmp"
+        },
+        {
+            "32": "Jazz Amp",
+            "112": "Jazz Guitar"
+        }
+    ],
+    "Clean Guitar": [
+        {
+            "32": "ChorusGt"
+        },
+        {
+            "32": "Chorus Guitar",
+            "112": "Clean Guitar",
+            "117": "60s Clean Guitar"
+        }
+    ],
+    "Muted Guitar": [
+        {
+            "40": "FunkGtr1",
+            "41": "MuteStlG",
+            "43": "FunkGtr2",
+            "45": "Jazz Man"
+        },
+        {
+            "40": "Funk Guitar 1",
+            "41": "Muted Steel Guitar",
+            "45": "Jazz Man"
+        }
+    ],
+    "Overdriven Guitar": [
+        {
+            "43": "Gt.Pinch"
+        },
+        {
+            "43": "Guitar Pinch"
+        }
+    ],
+    "Distortion Guitar": [
+        {
+            "40": "FeedbkGt"
+        },
+        {
+            "40": "Feedback Guitar",
+            "41": "Feedback Guitar 2"
+        }
+    ],
+    "Guitar Harmonics": [
+        {
+            "65": "GtFeedbk",
+            "66": "GtrHrmo2"
+        },
+        {
+            "65": "Guitar Feedback",
+            "66": "Guitar Harmonics 2"
+        }
+    ],
+    "Acoustic Bass": [
+        {
+            "40": "JazzRthm",
+            "45": "VXUprght"
+        },
+        {
+            "40": "Jazz Rhythm",
+            "45": "Velo Crsfade UprightBass"
+        }
+    ],
+    "Finger Bass": [
+        {
+            "18": "FingrDrk",
+            "27": "FlangeBa",
+            "40": "Ba&DstEG",
+            "43": "FngrSlap",
+            "45": "FngBass2",
+            "65": "ModAlem"
+        },
+        {
+            "18": "Finger Dark",
+            "40": "Bass & Distorted E.Gtr",
+            "43": "Finger Slap Bass",
+            "45": "Finger Bass 2",
+            "65": "Modulated Bass",
+            "112": "Mellow Finger Bass"
+        }
+    ],
+    "Pick Bass": [
+        {
+            "28": "MutePkBa"
+        },
+        {
+            "28": "Muted Pick Bass"
+        }
+    ],
+    "Fretless Bass": [
+        {
+            "32": "Fretles2",
+            "33": "Fretles3",
+            "34": "Fretles4",
+            "96": "SynFretl",
+            "97": "Smooth"
+        },
+        {
+            "32": "Fretless Bass 2",
+            "33": "Fretless Bass 3",
+            "34": "Fretless Bass 4"
+        }
+    ],
+    "Slap Bass 1": [
+        {
+            "27": "ResoSlap",
+            "32": "PunchThm"
+        },
+        {
+            "32": "Punch Thumb Bass"
+        }
+    ],
+    "Slap Bass 2": [
+        {
+            "43": "VeloSlap"
+        },
+        {
+            "43": "Velocity Switch Slap"
+        }
+    ],
+    "Synth Bass 1": [
+        {
+            "18": "SynBa1Dk",
+            "20": "FastResB",
+            "24": "AcidBass",
+            "35": "Clv Bass ",
+            "40": "TeknoBa",
+            "64": "Oscar",
+            "65": "SqrBass",
+            "66": "RubberBa",
+            "96": "Hammer"
+        },
+        {
+            "40": "Techno Synth Bass",
+            "112": "Synth Bass "
+        }
+    ],
+    "Synth Bass 2": [
+        {
+            "6": "MelloSB1",
+            "12": "Seq Bass",
+            "18": "ClkSynBa",
+            "19": "SynBa2Dk",
+            "32": "SmthBa 2",
+            "40": "ModulrBa",
+            "41": "DX Bass",
+            "64": "X WireBa"
+        },
+        {
+            "6": "Mellow Synth Bass",
+            "12": "Sequenced Bass",
+            "18": "Sequenced Bass",
+            "19": "Synth Bass 2 Dark",
+            "40": "Modular Synth Bass",
+            "41": "DX Bass",
+            "113": "Dance Bass"
+        }
+    ],
+    "Violin": [
+        {
+            "8": "SlowVln"
+        },
+        {
+            "8": "Slow Violin"
+        }
+    ],
+    "Viola": [
+        {},
+        {}
+    ],
+    "Cello": [
+        {},
+        {}
+    ],
+    "Contrabass": [
+        {},
+        {}
+    ],
+    "Tremolo Strings": [
+        {
+            "8": "SlowTrStr",
+            "40": "Susp Str"
+        },
+        {
+            "8": "Slow Tremolo Strings",
+            "40": "Suspense Strings"
+        }
+    ],
+    "Pizzicato Strings": [
+        {},
+        {}
+    ],
+    "Orchestral Harp": [
+        {
+            "40": "YangChin"
+        },
+        {
+            "40": "Yang Chin"
+        }
+    ],
+    "Timpani": [
+        {},
+        {}
+    ],
+    "Strings 1": [
+        {
+            "3": "S.Strngs",
+            "8": "Slow Str",
+            "24": "ArcoStr",
+            "35": "60sStrng",
+            "40": "Orchestr",
+            "41": "Orchstr2",
+            "42": "TremOrch",
+            "45": "VeloStr"
+        },
+        {
+            "3": "Stereo Strings",
+            "8": "Slow Attack Strings",
+            "35": "60's Strings",
+            "40": "Orchestra",
+            "41": "Orchestra 2",
+            "42": "Tremolo Orchestra",
+            "45": "Velocity Strings",
+            "112": "Strings"
+        }
+    ],
+    "Strings 2": [
+        {
+            "3": "S.SlwStr",
+            "8": "LegatoSt",
+            "40": "Warm Str",
+            "41": "Kingdom",
+            "64": "70s Str",
+            "65": "Str Ens3"
+        },
+        {
+            "3": "Stereo Slow Strings",
+            "8": "Legato Strings",
+            "40": "Warm Strings",
+            "41": "Kingdom",
+            "112": "Chamber Strings"
+        }
+    ],
+    "Synth Strings 1": [
+        {
+            "27": "ResoStr",
+            "64": "Syn Str4",
+            "65": "SS Str"
+        },
+        {}
+    ],
+    "Synth Strings 2": [
+        {},
+        {}
+    ],
+    "Choir Aahs": [
+        {
+            "3": "S.Choir",
+            "16": "Ch.Aahs2",
+            "32": "MelChoir",
+            "40": "ChoirStr"
+        },
+        {
+            "3": "Stereo Choir",
+            "32": "Mellow Choir",
+            "40": "Choir Strings",
+            "113": "Vocal Ensemble"
+        }
+    ],
+    "Voice Oohs": [
+        {},
+        {}
+    ],
+    "Synth Voice": [
+        {
+            "40": "SynVox2",
+            "41": "Choral",
+            "64": "AnaVoice"
+        },
+        {
+            "40": "Synth Voice 2",
+            "41": "Choral",
+            "64": "Analog Voice"
+        }
+    ],
+    "Orchestra Hit": [
+        {
+            "35": "OrchHit2",
+            "64": "Impact"
+        },
+        {
+            "35": "Orchestra Hit 2",
+            "64": "Impact"
+        }
+    ],
+    "Trumpet": [
+        {
+            "16": "Trumpet2",
+            "17": "BriteTrp",
+            "32": "WarmTrp"
+        },
+        {
+            "32": "Warm Trumpet",
+            "115": "Sweet! Trumpet"
+        }
+    ],
+    "Trombone": [
+        {
+            "18": "Trmbone2"
+        },
+        {
+            "18": "Trombone 2",
+            "112": "Solo Trombone",
+            "113": "Trombone Section"
+        }
+    ],
+    "Tuba": [
+        {
+            "16": "Tuba 2"
+        },
+        {}
+    ],
+    "Muted Trumpet": [
+        {},
+        {}
+    ],
+    "French Horn": [
+        {
+            "6": "FrHrSolo",
+            "32": "FrHorn2",
+            "37": "HornOrch"
+        },
+        {
+            "6": "French Horn Solo",
+            "32": "French Horn 2",
+            "37": "Horn Orchestra",
+            "112": "French Horns"
+        }
+    ],
+    "Brass Section": [
+        {
+            "35": "Tp&TbSec",
+            "40": "BrssSec2",
+            "41": "HiBrass",
+            "42": "HiBrass"
+        },
+        {
+            "35": "Trumpet & Trombone"
+        }
+    ],
+    "Synth Brass 1": [
+        {
+            "12": "QuackBr",
+            "20": "RezSynBr",
+            "24": "PolyBrss",
+            "27": "SynBras3",
+            "32": "JumpBrss",
+            "45": "AnaVelBr",
+            "64": "AnaBrss1"
+        },
+        {
+            "20": "Resonant Synth Brass",
+            "113": "80s Brass"
+        }
+    ],
+    "Synth Brass 2": [
+        {
+            "18": "Soft Brs",
+            "40": "SynBras4",
+            "41": "ChorBrss",
+            "45": "VelBras2",
+            "64": "AnaBrss2"
+        },
+        {
+            "18": "Soft Brass",
+            "41": "Choir Brass"
+        }
+    ],
+    "Soprano Sax": [
+        {},
+        {
+            "113": "Sweet! Soprano Sax"
+        }
+    ],
+    "Alto Sax": [
+        {
+            "40": "Sax Sect",
+            "43": "HyprAlto"
+        },
+        {
+            "40": "Sax Section"
+        }
+    ],
+    "Tenor Sax": [
+        {
+            "40": "BrthTnSx",
+            "41": "SoftTenr",
+            "64": "TnrSax 2"
+        },
+        {
+            "40": "Breathy Tenor Sax",
+            "114": "Breathy Tenor Sax 2",
+            "117": "Sweet! Tenor Sax"
+        }
+    ],
+    "Baritone Sax": [
+        {},
+        {}
+    ],
+    "Oboe": [
+        {},
+        {}
+    ],
+    "English Horn": [
+        {},
+        {}
+    ],
+    "Bassoon": [
+        {},
+        {}
+    ],
+    "Clarinet": [
+        {},
+        {}
+    ],
+    "Piccolo": [
+        {},
+        {}
+    ],
+    "Flute": [
+        {},
+        {
+            "114": "Sweet! Flute"
+        }
+    ],
+    "Recorder": [
+        {},
+        {}
+    ],
+    "Pan Flute": [
+        {},
+        {
+            "113": "Sweet! Pan Flute"
+        }
+    ],
+    "Blown Bottle": [
+        {},
+        {}
+    ],
+    "Shakuhachi": [
+        {},
+        {}
+    ],
+    "Whistle": [
+        {},
+        {}
+    ],
+    "Ocarina": [
+        {},
+        {}
+    ],
+    "Square Lead": [
+        {
+            "6": "Square 2",
+            "8": "LMSquare",
+            "18": "Hollow",
+            "19": "Shmoog",
+            "64": "Mellow",
+            "65": "SoloSine",
+            "66": "SineLead"
+        },
+        {
+            "6": "Square Lead 2",
+            "8": "LM Square",
+            "18": "Hollow",
+            "19": "Shroud",
+            "64": "Mellow",
+            "65": "Solo Sine",
+            "66": "Sine Lead"
+        }
+    ],
+    "Sawtooth Lead": [
+        {
+            "6": "Saw 2 ",
+            "8": "ThickSaw",
+            "18": "DynaSaw",
+            "19": "DigiSaw",
+            "20": "Big Lead",
+            "24": "HeavySyn",
+            "25": "WaspySyn",
+            "40": "PulseSaw",
+            "41": "Dr. Lead",
+            "45": "VeloLead",
+            "96": "Seq Ana"
+        },
+        {
+            "6": "Sawtooth Lead 2",
+            "8": "Thick Sawtooth",
+            "18": "Dynamic Sawtooth",
+            "19": "Digital Sawtooth",
+            "20": "Big Lead",
+            "96": " Sequenced Analog",
+            "115": "Analogon",
+            "119": "Fargo"
+        }
+    ],
+    "Calliope Lead": [
+        {
+            "65": "Pure Pad"
+        },
+        {
+            "65": "Pure Lead"
+        }
+    ],
+    "Chiff Lead": [
+        {
+            "64": "Rubby"
+        },
+        {}
+    ],
+    "Charang Lead": [
+        {
+            "64": "DistLead",
+            "65": "WireLead"
+        },
+        {
+            "64": "Distorted Lead"
+        }
+    ],
+    "Voice Lead": [
+        {
+            "24": "SynthAah",
+            "64": "VoxLead"
+        },
+        {
+            "112": "Voice Lead"
+        }
+    ],
+    "Fifths Lead": [
+        {
+            "35": "Big Five"
+        },
+        {
+            "35": "Big Five"
+        }
+    ],
+    "Bass & Lead": [
+        {
+            "16": "Big&Low ",
+            "64": "Fat&Prky",
+            "65": "SoftWurl"
+        },
+        {
+            "16": "Big & Low ",
+            "64": "Fat & Perky",
+            "65": "Soft Whirl"
+        }
+    ],
+    "New Age Pad": [
+        {
+            "64": "Fantasy2"
+        },
+        {
+            "64": "Fantasy",
+            "112": "Fantasia"
+        }
+    ],
+    "Warm Pad": [
+        {
+            "16": "ThickPad",
+            "17": "Soft Pad",
+            "18": "SinePad",
+            "64": "Horn Pad",
+            "65": "RotarStr"
+        },
+        {}
+    ],
+    "Poly Synth Pad": [
+        {
+            "64": "PolyPd80",
+            "65": "ClickPad",
+            "66": "Ana Pad",
+            "67": "SquarPad"
+        },
+        {}
+    ],
+    "Choir Pad": [
+        {
+            "64": "Heaven2",
+            "66": "Itopia",
+            "67": "CC Pad"
+        },
+        {
+            "64": "Heaven",
+            "66": "Itopia"
+        }
+    ],
+    "Bowed Pad": [
+        {
+            "64": "Glacier",
+            "65": "GlassPad"
+        },
+        {}
+    ],
+    "Metallic Pad": [
+        {
+            "64": "Tine Pad",
+            "65": "Pan Pad"
+        },
+        {}
+    ],
+    "Halo Pad": [
+        {},
+        {}
+    ],
+    "Sweep Pad": [
+        {
+            "20": "Shwimmer",
+            "27": "Converge",
+            "64": "PolarPad",
+            "66": "Celstial"
+        },
+        {}
+    ],
+    "Rain": [
+        {
+            "45": "ClaviPad",
+            "64": "HrmoRain",
+            "65": "AfrcnWnd",
+            "66": "Caribean"
+        },
+        {
+            "65": "African Wind",
+            "66": "Caribbean"
+        }
+    ],
+    "Sound Track": [
+        {
+            "27": "Prologue",
+            "64": "Ancestrl"
+        },
+        {
+            "27": "Prologue"
+        }
+    ],
+    "Crystal": [
+        {
+            "12": "SynDrCmp",
+            "14": "Popcorn",
+            "18": "TinyBell",
+            "35": "RndGlock",
+            "40": "GlockChi",
+            "41": "ClearBel",
+            "42": "ChorBell",
+            "64": "SynMalet",
+            "65": "SftCryst",
+            "66": "LoudGlok",
+            "67": "XmasBell",
+            "68": "VibeBell",
+            "69": "DigiBell",
+            "70": "AirBells",
+            "71": "BellHarp",
+            "72": "Gamelmba"
+        },
+        {
+            "12": "Synth Drum Comp",
+            "14": "Popcorn",
+            "18": "Tiny Bells",
+            "35": "Round Glockenspiel",
+            "40": "Glockenspiel Chimes",
+            "41": "Clear Bells",
+            "42": "Chorus Bells",
+            "65": "Soft Crystal",
+            "70": "Air Bells",
+            "71": "Bell Harp",
+            "72": "Gamelimba"
+        }
+    ],
+    "Atmosphere": [
+        {
+            "18": "WarmAtms",
+            "19": "HollwRls",
+            "40": "NylonEP",
+            "64": "NylnHarp",
+            "65": "Harp Vox",
+            "66": "AtmosPad",
+            "67": "Planet"
+        },
+        {
+            "18": "Warm Atmosphere",
+            "19": "Hollow Release",
+            "40": "Nylon Electric Piano",
+            "64": "Nylon Harp",
+            "65": "Harp Vox",
+            "66": "Atmosphere Pad",
+            "67": "Planet"
+        }
+    ],
+    "Brightness": [
+        {
+            "64": "FantaBel",
+            "96": "Smokey"
+        },
+        {
+            "112": "Brightness",
+            "113": "Bell Pad"
+        }
+    ],
+    "Goblins": [
+        {
+            "64": "GobSyn",
+            "65": "50sSciFi",
+            "66": "Ring Pad",
+            "67": "Ritual",
+            "68": "ToHeaven",
+            "70": "Night",
+            "71": "Glisten",
+            "96": "BelChoir"
+        },
+        {
+            "64": "Goblins Synth",
+            "65": "Creeper",
+            "67": "Ritual",
+            "68": "To Heaven",
+            "70": "Night",
+            "71": "Glisten",
+            "96": "Bell Choir"
+        }
+    ],
+    "Echoes": [
+        {
+            "8": "EchoPad2",
+            "14": "Echo Pan",
+            "64": "EchoBell",
+            "65": "Big Pan",
+            "66": "SynPiano",
+            "67": "Creation",
+            "68": "Stardust",
+            "69": "Reso Pan"
+        },
+        {}
+    ],
+    "Sci-Fi": [
+        {
+            "64": "Starz"
+        },
+        {}
+    ],
+    "Sitar": [
+        {
+            "32": "DetSitar",
+            "35": "Sitar 2 ",
+            "96": "Tambra",
+            "97": "Tamboura"
+        },
+        {
+            "32": "Detuned Sitar",
+            "35": "Sitar 2 ",
+            "97": "Tamboura"
+        }
+    ],
+    "Banjo": [
+        {
+            "28": "MuteBnjo",
+            "96": "Rabab",
+            "97": "Gopichnt",
+            "98": "Oud"
+        },
+        {
+            "28": "Muted Banjo",
+            "96": "Rabab",
+            "97": "Gopichant",
+            "98": "Oud"
+        }
+    ],
+    "Shamisen": [
+        {},
+        {}
+    ],
+    "Koto": [
+        {
+            "96": "T. Koto",
+            "97": "Kanoon"
+        },
+        {
+            "96": "Taisho-kin",
+            "97": " Kanoon"
+        }
+    ],
+    "Kalimba": [
+        {},
+        {}
+    ],
+    "Bagpipe": [
+        {},
+        {}
+    ],
+    "Fiddle": [
+        {},
+        {}
+    ],
+    "Shanai": [
+        {
+            "64": "Shanai2",
+            "96": "Pungi",
+            "97": "Hichriki"
+        },
+        {}
+    ],
+    "Tinkle Bell": [
+        {
+            "96": "Bonang",
+            "97": "Gender",
+            "98": "Gamelan",
+            "99": "S.Gamlan",
+            "100": "Rama Cym",
+            "101": "AsianBel"
+        },
+        {
+            "96": "Bonang",
+            "97": "Altair",
+            "98": "Gamelan Gongs",
+            "99": "Stereo Gamelan Gongs",
+            "100": "Rama Cymbal"
+        }
+    ],
+    "Agogo": [
+        {},
+        {}
+    ],
+    "Steel Drums": [
+        {
+            "97": "GlasPerc",
+            "98": "ThaiBell"
+        },
+        {
+            "97": "Glass Percussion",
+            "98": "Thai Bells"
+        }
+    ],
+    "Woodblock": [
+        {
+            "96": "Castanet"
+        },
+        {
+            "96": "Castanets"
+        }
+    ],
+    "Taiko Drum": [
+        {
+            "96": "Gr.Cassa"
+        },
+        {
+            "96": "Gran Cassa"
+        }
+    ],
+    "Melodic Tom": [
+        {
+            "64": "Mel Tom2",
+            "65": "Real Tom",
+            "66": "Rock Tom"
+        },
+        {
+            "64": "Melodic Tom 2",
+            "65": "Real Tom",
+            "66": "Rock Tom"
+        }
+    ],
+    "Synth Drum": [
+        {
+            "64": "Ana Tom",
+            "65": "ElecPerc"
+        },
+        {
+            "64": "Analog Tom",
+            "65": "Electronic Percussion"
+        }
+    ],
+    "Reverse Cymbal": [
+        {},
+        {}
+    ],
+    "Fret Noise": [
+        {},
+        {}
+    ],
+    "Breath Noise": [
+        {},
+        {}
+    ],
+    "Seashore": [
+        {},
+        {}
+    ],
+    "Bird Tweet": [
+        {},
+        {}
+    ],
+    "Telephone Ring": [
+        {},
+        {}
+    ],
+    "Helicopter": [
+        {},
+        {}
+    ],
+    "Applause": [
+        {},
+        {}
+    ],
+    "Gunshot": [
+        {},
+        {}
+    ]
+}
+
+function buildList(set) {
+document.querySelector(".current").classList.remove("current");
+document.querySelector(`nav div#n${set}`).classList.add("current");
+let list = Object.keys(data), s = "";
+
+for(let i = 0; i < list.length; i++) {
+    s += `<span id=b><div id=a>${list[i]}<span id=x>${i+1}</span></div><div id=d>`;
+    let thing = data[list[i]][set];
+    for(item in thing) {
+    s += `<span voice="${thing[item]}" id=c>${item}</span>`;
+    }
+    s += `</div></span>`;
+}
+
+document.querySelector("list").innerHTML = s;
+}
+
+buildList(0);
+</script>
+<style>
+nav{position:fixed;top:0;left:0;margin:10px 4px}
+nav div{border-radius:3px;padding:4px 7px;cursor:pointer;color:#DFE5E999}
+nav div.current {color:#DFE5E9;background:#3A3D4C88}
+nav div:hover{background:#3A3D4C}
+body{font-family:sans-serif;background:#0B0B13;color:#DFE5E9;font-size:20px;margin-left:160px}
+div#a{font-weight:bold;text-align:center;padding-top:3px;padding-bottom:3px;background:#20212D;border-radius:3px 3px 0 0}
+span#b{text-align:center;display:inline-block;width:272;margin:2px;vertical-align:text-top;position:relative}
+span#c{outline:1px solid #FFF2;display:inline-block;text-align:center;width:34px;background:#627600;letter-spacing:-1px;}
+span#c:hover{background:#515E29;cursor:default;font-weight:bold}
+div#d{background:#3A3D4C;height:46px;border-radius:0 0 3px 3px}
+span#x{float:right;display:inline-block;font-size:14px;margin-right:5px;margin-top:2px;z-index:5;color:#DFE5E999}
+
+span#c:hover::after {
+    top: 100%; left: 0; z-index: 1;
+    position: absolute;
+    white-space: nowrap;
+    content: attr(voice);
+    width: 100%;
+    background: #111e;
+    margin-top: 3px;
+    padding:  9px 0 9px 0;
+    box-shadow: 0px 2px 8px #111e;
+    text-shadow: 0px 0px 5px #000, 0px 0px 5px #000, 0px 0px 5px #000;
+    outline: 1px solid #000c;
+    border-radius: 4px;
+}
+</style>
