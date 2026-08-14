@@ -1,1 +1,193 @@
-hello
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
+
+<style>
+body{
+ font:20px "Didact Gothic";
+ width:800px;
+ margin:auto;
+ margin-top:64px;
+}
+
+h2 span{float:right}
+
+h2{border-bottom:1px solid #BBB}
+</style>
+
+<h1>ancient vst adventures</h1>
+
+<h2>MonoPoly16 by S&C Develop<span>0/10</span></h2>
+
+<img src="res/sc_monopoly.png">
+
+<p>
+One of the earliest VST synths released ever. From Dec 1999 or Jan 2000. This thing is <i>really</i> bad. Pitch wheel and mod wheel do nothing. There is no filter envelope. It has no sustain envelope setting, so the closest you can get is to set decay to 'zero' for an infinite decay. It wasn't even free, it was being sold for $40 USD.
+It has EXTREME aliasing - the waveforms kinda sound nasty on their own, and the resonance peak is brutal and clips easily, so it is quite unpleasant for both speakers and ears.
+Also some of the knobs are seemingly backwards. The only good thing about it is you can detune the two oscillators against each other for that classic phase-y effect.
+
+<p>Here's my attempt to make something ambient with it, showing off the filter character and aliasing. Reverb is Supermassive.
+
+<p><audio controls src="res/sc_monopoly.opus"></p>
+
+<h2>SC 101 by S&C Develop<span>0/10</span></h2>
+
+<img src="res/sc101.png">
+
+<p>A rather bad Roland SH-101 simulation from Jan 2000, built off of MonoPoly16. It's not much better. The brutal resonance is still here, and the envelopes are quite clicky and annoying.
+
+
+<p>Before I decided to never use it again, I tried making a quick Trance demo:
+
+
+
+
+<p><audio controls src="res/sc101.opus"></p>
+
+<h2>Steinberg Neon<span>0/10</span></h2>
+
+<img src="res/neon.png">
+
+<p>The <i>very first</i> VST synth from July 1999. Unfortunately it sucks. The waveforms are very low resolution, seemingly constructed with a limited number of sine harmonics, resulting in non-existent high frequencies, even with a fully open filter. There's supposedly two oscillators; you can detune them up to 7 semitones, but you can only select one waveform. There's a dedicated filter envelope but it doesn't have the usual "filter amount" control, so it can get a bit wonky depending on the cutoff and sustain values.
+
+<p>Here's an ambient demo made entirely with Neon, including the drums (the hats/snare by running Neon output through a reverb with very short decay/room size).
+
+<p><audio controls src="res/neon.opus"></p>
+
+<h2>Muon Atom<span>2/10</span></h2>
+
+<img src="res/atompro.png">
+
+<p>A marginally better synth than Neon, but no detunable oscillators, just a mix between PWM and Saw. It also aliases quite a bit. Atom was free and had no GUI, Atom Pro had a GUI, sounded exactly the same, but was not free, originally costing $30 USD.
+
+<p>Sound demo. External percussion samples and Reverb were used.
+
+<p><audio controls src="res/atompro.opus"></p>
+
+
+<h2>Koblo's mini synths (Vibra2000, 3000, Centaurus)<span>3/10</span></h2>
+
+<img src="res/koblo.png">
+
+<p>Three different synths, sharing an engine, each with their own feature set, but they're all quite limiting. Centaurus might be alright though.
+
+<p>Did this Trance intro with Vibra2000's supersaw/"multi" sound, the weakest synth of the three:
+
+<p><audio controls src="res/koblo1.opus"></p>
+
+
+
+<h2>LinPlug GakStoar Alpha<span>4/10</span></h2>
+
+<img src="res/gakstoara.png">
+
+<p>It's not pretty, and the modulation matrix can be very annoying (clicking the number resets the previous position to the 0), but it's interesting. It's got a decent feature set and was the first VST synths with a modulation matrix. Also one of the first VSTs ever released from Jan 2000. It was free (there was a paid version with more features). It's got a bit of aliasing but it's not that bad on the ears, it's more of a vibe. This synth was the basis of what would eventually be LinPlug AlphaFree 3, which still holds up today as a bread-n-butter synth.
+
+<p>A short test of a patch I made that detunes the two oscillators a fourth apart using the pitch envelope (which is tricky to do because the main oscillators can only be directly detuned by octaves):
+
+<p><audio controls src="res/gakstoara.opus"></p>
+
+
+
+
+<h2>Steinberg Model-E<span>5/10</span></h2>
+
+<img src="res/modele.png">
+
+<p>Steinberg's first commercial VST synth, released at NAMM in Jan 2000 (but was largely finished by Aug 1999). Originally cost US$200, but they released it as freeware in 2011. It's intended to be a Minimoog simulation, but it's quite off and doesn't sound analog at all.
+
+<p>I was never a fan of this one, but it's still quite usable for basic sounds.
+
+<p>An old BOC-inspired thing I did using only Model-E, uses chorus effect liberally though.
+
+<p><audio controls src="res/surfboards of canada.mp3"></p>
+
+<h2>Native Instruments Pro-52<span>7/10</span></h2>
+
+<img src="res/pro52.png">
+
+<p>Native Instrument's first VST was <b>Pro-Five</b>, released alongside Model-E at NAMM in Jan 2000. Pro-52 came out in June 2000, and really only added a delay effect and an "Analog" knob. I just prefer it because Pro-Five seemed to be buggy or unstable. There's also Pro-53 from Oct 2002 which revamped the UI slightly and added a few new features, which could be considered the de facto version.
+
+<p>Essentially it's a Prophet-5 simulation. It doesn't sound analog at all, but unlike Model-E it kinda sounds good and has character. I don't know if it's just the PWM and Osc Sync feature winning me over, but I consider it to have that classic "virtual analog" digital vibe that the Nord Lead had.
+
+
+<p>I've yet to do a demo track (probably put it off because I wanted to make sure I did it justice).
+
+
+
+<h2>Loftsoft cesSynth1<span>3.5/10</span></h2>
+
+<img src="res/cessynth1.png">
+
+<p>Before Synth1, Sylenth1, there was cesSynth1. It's a quirky little wave-shaping synth. You got two oscillators, and the waveform has 4 parameters. There's also Sync or FM, but it generally doesn't sound that good. The oscillators are low-fidelity, and the filter is quite bad (but not as bad as MonoPoly16). It's still one of the earliest VST synths, first released in March 2000.
+
+
+<p>Yet to do a proper demo.
+
+
+<h2>BitHeadz Retro AS-1<span>4.2/10</span></h2>
+
+<img src="res/retroas1.png">
+
+<p>Technically Retro AS-1 is from 1998 and predates VST, but this is the VST version. It originally cost US$200. It's efectively a semi-modular synth; there's a ton of routing options. But it's modular nature also makes it a pain in the ass to use. To use envelopes you have to assign the envelope to something first. There's only 8 routing slots, and if you want a volume envelope, filter envelope and velocity on volume, that's already 3 slots gone. The envelope editor is also absolutely terrible to use. It's pretty prone to aliasing and distortion, so it's very difficult to get "smooth" sounds without any fuzz.
+
+<p>And to make matters worse, it's also a pain in the ass to setup on modern OSes. It only works if you run your DAW as Administrator, which is the first time in 20 years I had to specifically do that. It can be unstable at times, requiring you to save often and restart your DAW, or might outright crash. You cannot automate any parameters directly, instead you can assign controls to up to 4 specific MIDI controllers, and automate that via MIDI CC. On the upside, it's 16-part multitimbral, though sometimes it acts up a bit and changes the current MIDI program when you don't expect it to.
+
+<p>The included presets aren't amazing, very digital sounding. It definitely shows its age, but it does have a bit of depth and character.
+
+
+<p>A house beat.
+
+<p><audio controls src="res/retroas1_2.opus"></p>
+
+<p>A short little demo showing off a cool (edited) patch I made. Drums are Drumaxx + Vocodex.
+
+<p><audio controls src="res/retroas1.opus"></p>
+
+
+
+<h2>Next up...</h2>
+<ul>
+<li>Askywhale Osc321 (2001?)
+<li>GakStoar Delta (Jan 2000?)
+<li>VB-1 by Steinberg (Dec 1999?)
+<li>PPG Wave 2.V by Waldorf (Mar 2000)
+<li>Rainbow by Big Tick Software (Apr 2000)
+<li>cesSynth2 / cesSynth4 / cesSynth5 by LoftSoft (Apr 2000)
+<li>Tau Bassline by Muon Software (May 2000)
+<li>Wasp by Synapse Audio (May 2000)
+<li>JXSynth by JXPlugins (Jun 2000)
+<li>JX220 by JXPlugins (Aug 2000)
+<li>Electron by Muon Software (Jul 2000)
+<li>Mercury-1 by TC Works (Oct 2000)
+<li>JX10 by mda (Oct 2000) / Steinberg JX16
+<li>FMHeaven by LoftSoft (Nov 2000)
+<li>Bojo Impulse (Dec 2000)
+<li>The BassLine by reFX (Jan 2001)
+<li>FM7 by Native Instruments (Feb 2001)
+<li>Absynth by Native Instruments (Feb 2001)
+<li>Scorpion by Synapse Audio (Apr 2001)
+<li>Triangle I by rgcAudio Software (Apr 2001)
+<li>Square I by rgcAudio Software (May 2001)
+<li>CM-101 by Muon (Jun 2001)
+<li>Phantom by ArGuru (June 2001) - was licensed to discoDSP
+<li>Rebel by !j Development (Aug 2001)
+<li>Sonic by !j Development (Aug 2001)
+<li>Ninja by !j Development (2002?)
+<li>CS40 by Steinberg (Oct 2001)
+<li>AnaMark by Mark Henning (Oct 2001)
+<li>Pentagon I by rgcAudio Software (Nov 2001)
+<li>Image-Line SimSynth Live!
+<li>KeyToSound Remedy (Koblo)
+<li>Steinberg A1 (2002?)
+<li>rgc:audio z3ta+ (2003?)
+<li>Synapse Junglist (2003?)
+<li>Audio Simulation DreamStation DXi2 (2002?)
+<li>Daichi Synth1 (2002?)
+<li>Groovecube Exciton (2003)
+<li>Korg Legacy Collection (2004)
+<li>g200kg SmallQoo
+
+
+
+</ul>
